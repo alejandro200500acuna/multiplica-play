@@ -36,7 +36,7 @@ export default function MathMemory() {
       // Loop until we find a unique result to prevent "multiple correct cards" ambiguity
       do {
         num1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
-        num2 = Math.floor(Math.random() * 11) + 2;
+        num2 = Math.floor(Math.random() * 10) + 1; // 1 to 10
         result = num1 * num2;
       } while (usedResults.has(result));
       
