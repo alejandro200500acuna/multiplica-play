@@ -21,16 +21,26 @@ export default function MathMemory() {
   const [flippedIds, setFlippedIds] = useState<string[]>([]);
   const [matches, setMatches] = useState(0);
   const [attempts, setAttempts] = useState(0);
+  const [startTime, setStartTime] = useState<number>(0);
 
   const TOTAL_PAIRS = 6; // 12 cards total
 
   useEffect(() => {
     const newCards: Card[] = [];
     
+    // Use a Set to ensure unique mathematical results so we don't have multiple identical results
+    const usedResults = new Set<number>();
+    
     for (let i = 0; i < TOTAL_PAIRS; i++) {
-      const num1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
-      const num2 = Math.floor(Math.random() * 11) + 2;
-      const result = num1 * num2;
+      let num1, num2, result;
+      // Loop until we find a unique result to prevent "multiple correct cards" ambiguity
+      do {
+        num1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
+        num2 = Math.floor(Math.random() * 11) + 2;
+        result = num1 * num2;
+      } while (usedResults.has(result));
+      
+      usedResults.add(result);
       
       const matchId = `pair-${i}`;
       
@@ -55,7 +65,14 @@ export default function MathMemory() {
     
     // Shuffle
     setCards(newCards.sort(() => Math.random() - 0.5));
-  }, []);
+    setStartTime(Date.now());
+  }, [selectedTables]);
+
+  const getCardMathValue = (card: Card) => {
+    if (card.type === 'result') return parseInt(card.value);
+    const [num1, num2] = card.value.split(' × ').map(Number);
+    return num1 * num2;
+  };
 
   const handleCardClick = (id: string) => {
     if (flippedIds.length === 2) return; // Prevent flipping more than 2
@@ -74,7 +91,13 @@ export default function MathMemory() {
       const firstCard = cards.find(c => c.id === firstId)!;
       const secondCard = cards.find(c => c.id === secondId)!;
       
-      if (firstCard.matchId === secondCard.matchId) {
+      const value1 = getCardMathValue(firstCard);
+      const value2 = getCardMathValue(secondCard);
+      
+      // Match if they have the same mathematical value AND opposite types
+      const isMathMatch = (value1 === value2) && (firstCard.type !== secondCard.type);
+      
+      if (isMathMatch) {
         // Match!
         setTimeout(() => {
           setCards(prev => prev.map(c => 
@@ -87,7 +110,7 @@ export default function MathMemory() {
           setMatches(newMatches);
           
           if (newMatches === TOTAL_PAIRS) {
-            finishGame(TOTAL_PAIRS, attempts + 1 - TOTAL_PAIRS); // Approximate score math
+            finishGame(TOTAL_PAIRS, attempts + 1 - TOTAL_PAIRS); // Score logic
           }
         }, 1000);
       } else {
@@ -105,13 +128,32 @@ export default function MathMemory() {
   };
 
   const finishGame = async (correct: number, wrong: number) => {
-    const percentage = Math.round((correct / (correct + wrong)) * 100);
+    const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const totalAttempts = correct + wrong;
+    // Memory score is 100% minus a penalty for extra wrong attempts
+    const percentage = Math.max(0, Math.round((correct / totalAttempts) * 100));
     const passed = percentage >= 50;
     
-    setResults(correct, wrong, percentage, passed);
-    
+    let isNewRecord = false;
+
     try {
       if (studentId && studentId !== 'fallback-id') {
+        const { data: previousBest } = await supabase
+          .from('practice_sessions')
+          .select('duration_seconds')
+          .eq('student_id', studentId)
+          .eq('game_type', 'MEMORY')
+          .eq('passed', true)
+          .order('duration_seconds', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (passed) {
+          if (!previousBest || (previousBest.duration_seconds > 0 && durationSeconds < previousBest.duration_seconds)) {
+            isNewRecord = true;
+          }
+        }
+
         await supabase
           .from('practice_sessions')
           .insert({
@@ -121,12 +163,15 @@ export default function MathMemory() {
             score_percentage: percentage,
             correct_answers: correct,
             wrong_answers: wrong,
-            passed: passed
+            passed: passed,
+            duration_seconds: durationSeconds
           });
       }
     } catch (error) {
       console.error(error);
     }
+    
+    setResults(correct, wrong, percentage, passed, durationSeconds, isNewRecord);
     
     setTimeout(() => {
       setStep('RESULTS');
