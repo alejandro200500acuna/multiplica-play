@@ -172,7 +172,7 @@ export default function WelcomeScreen() {
       
       setUser(data.full_name, data.id, data.role);
       
-      if (data.role === 'admin') {
+      if (data.role === 'admin' || data.role === 'profesor') {
         setStep('ADMIN_DASHBOARD');
       } else {
         setStep('TABLES');

@@ -7,7 +7,7 @@ import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw } from 'lucide-react'
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
-  const { resetAll } = useStore();
+  const { resetAll, role } = useStore();
   const [students, setStudents] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [newFullname, setNewFullname] = useState('');
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newUserRole, setNewUserRole] = useState('student');
   const [isCreating, setIsCreating] = useState(false);
   const [createMsg, setCreateMsg] = useState('');
 
@@ -23,7 +24,7 @@ export default function AdminDashboard() {
     const { data } = await supabase
       .from('users')
       .select('*, practice_sessions(count)')
-      .eq('role', 'student')
+      .eq('role', 'student') // we can still just fetch students in the list, or we could remove the filter
       .order('created_at', { ascending: false });
     
     if (data) {
@@ -48,7 +49,7 @@ export default function AdminDashboard() {
         full_name: newFullname.trim(),
         username: newUsername.trim(),
         password: newPassword.trim(),
-        role: 'student'
+        role: newUserRole
       }]);
       
       if (error) {
@@ -85,7 +86,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                Panel de Administración
+                {role === 'profesor' ? 'Panel del Profesor' : 'Panel de Administración'}
               </h2>
               <p className="text-foreground/70 font-medium">Gestión de estudiantes y progreso</p>
             </div>
@@ -142,6 +143,20 @@ export default function AdminDashboard() {
                     required
                   />
                 </div>
+                {role === 'admin' && (
+                  <div>
+                    <label className="text-sm font-bold opacity-80 mb-1 block">Tipo de Usuario</label>
+                    <select
+                      value={newUserRole}
+                      onChange={(e) => setNewUserRole(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none"
+                    >
+                      <option value="student">Estudiante</option>
+                      <option value="profesor">Profesor</option>
+                      <option value="admin">Administrador</option>
+                    </select>
+                  </div>
+                )}
                 <button
                   type="submit"
                   disabled={isCreating}

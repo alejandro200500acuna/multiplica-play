@@ -7,7 +7,7 @@ interface GameState {
   currentStep: Step;
   studentName: string;
   studentId: string | null;
-  role: 'student' | 'admin' | null;
+  role: 'student' | 'admin' | 'profesor' | null;
   selectedTables: number[];
   currentGame: GameType;
   scorePercentage: number;
