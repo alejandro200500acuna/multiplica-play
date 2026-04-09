@@ -144,6 +144,9 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
           .single();
           
         if (sessionError) throw sessionError;
+        
+        // Refresh online status indicator
+        await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', studentId);
       }
     } catch (error) {
       console.error("Error saving session", error);

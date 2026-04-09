@@ -169,6 +169,8 @@ export default function WelcomeScreen() {
         setIsLoading(false);
         return;
       }
+      // Update last_login timestamp
+      await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', data.id);
       
       setUser(data.full_name, data.id, data.role);
       

@@ -214,6 +214,7 @@ export default function AdminDashboard() {
                         <th className="px-6 py-4 text-left font-bold opacity-70">Contraseña</th>
                         {role === 'admin' && <th className="px-6 py-4 text-left font-bold opacity-70">Rol</th>}
                         <th className="px-6 py-4 text-center font-bold opacity-70">Sesiones Jugadas</th>
+                        <th className="px-6 py-4 text-center font-bold opacity-70">Estado</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/5 dark:divide-white/5">
@@ -238,11 +239,38 @@ export default function AdminDashboard() {
                               {st.practice_sessions?.[0]?.count || 0}
                             </span>
                           </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              {(() => {
+                                let online = false;
+                                if (st.last_login) {
+                                  const diff = (new Date().getTime() - new Date(st.last_login).getTime()) / 1000 / 60;
+                                  online = diff < 30; // online if within 30 mins
+                                }
+                                return online ? (
+                                  <span className="flex items-center gap-2 text-green-500 font-bold text-sm">
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                    En línea
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center gap-2 text-red-500 font-bold text-sm">
+                                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                                    Desconectado
+                                  </span>
+                                );
+                              })()}
+                              <span className="text-xs opacity-60">
+                                {st.last_login ? new Date(st.last_login).toLocaleString('es-ES', { 
+                                  day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' 
+                                }) : 'Nunca'}
+                              </span>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                       {students.length === 0 && (
                         <tr>
-                          <td colSpan={4} className="px-6 py-8 text-center opacity-60 italic">
+                          <td colSpan={6} className="px-6 py-8 text-center opacity-60 italic">
                             No hay estudiantes registrados. Crea el primero a la izquierda.
                           </td>
                         </tr>

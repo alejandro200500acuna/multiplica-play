@@ -166,6 +166,9 @@ export default function MathMemory() {
             passed: passed,
             duration_seconds: durationSeconds
           });
+          
+        // Refresh online status indicator
+        await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', studentId);
       }
     } catch (error) {
       console.error(error);
