@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import WelcomeScreen from '@/components/screens/WelcomeScreen';
 import TablesScreen from '@/components/screens/TablesScreen';
@@ -10,6 +11,13 @@ import AdminDashboard from '@/components/screens/AdminDashboard';
 
 export default function Home() {
   const currentStep = useStore((state) => state.currentStep);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <main className="flex-1 min-h-screen" />;
 
   return (
     <main className="flex-1 flex flex-col min-h-screen p-4 md:p-8">
