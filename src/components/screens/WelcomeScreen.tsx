@@ -198,9 +198,26 @@ export default function WelcomeScreen() {
         <h1 className="text-4xl md:text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent mb-2 title-shadow" style={{WebkitTextStroke: '1.5px white', WebkitTextFillColor: 'transparent'}}>
           Multiplica Play
         </h1>
-        <p className="text-lg text-foreground/80 font-medium mb-8">
+        <p className="text-lg text-foreground/80 font-medium mb-4">
           ¡Aprende y practica las tablas de multiplicar jugando!
         </p>
+
+        <div className="min-h-[3rem] mb-4 flex items-center justify-center">
+          <AnimatePresence>
+            {username.trim() && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span className="inline-block px-5 py-1.5 bg-primary/10 dark:bg-primary/20 text-primary-dark dark:text-primary-100 border border-primary/20 rounded-full text-xl font-display font-bold shadow-sm">
+                  ¡Hola, {username.trim()}! 👋
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         <form onSubmit={handleStart} className="flex flex-col gap-5">
           <div className="flex flex-col gap-2 text-left">
