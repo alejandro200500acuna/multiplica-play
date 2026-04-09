@@ -111,6 +111,7 @@ export default function WelcomeScreen() {
 
   // Register state
   const [regFullname, setRegFullname] = useState('');
+  const [regUsername, setRegUsername] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regPasswordConfirm, setRegPasswordConfirm] = useState('');
   const [regError, setRegError] = useState('');
@@ -151,7 +152,11 @@ export default function WelcomeScreen() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
-    if (!regFullname.trim() || !regPassword.trim()) return;
+    if (!regFullname.trim() || !regPassword.trim() || !regUsername.trim()) return;
+    if (regUsername.trim().length < 3) {
+      setRegError('El nombre de usuario debe tener al menos 3 caracteres.');
+      return;
+    }
     if (regPassword !== regPasswordConfirm) {
       setRegError('Las contraseñas no coinciden.');
       return;
@@ -162,22 +167,21 @@ export default function WelcomeScreen() {
     }
     setIsRegistering(true);
     try {
-      const baseUsername = regFullname.trim().toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, '.');
-      const suffix = Math.floor(Math.random() * 900) + 100;
-      const generatedUsername = `${baseUsername}${suffix}`;
 
       const { data, error } = await supabase.from('users').insert([{
         full_name: regFullname.trim(),
-        username: generatedUsername,
+        username: regUsername.trim().toLowerCase(),
         password: regPassword.trim(),
         role: 'student',
         last_login: new Date().toISOString()
       }]).select().single();
 
       if (error) {
-        setRegError('Error al crear la cuenta. Intenta de nuevo.');
+        if (error.code === '23505') {
+          setRegError('Ese nombre de usuario ya está en uso. Elige otro.');
+        } else {
+          setRegError('Error al crear la cuenta. Intenta de nuevo.');
+        }
         setIsRegistering(false);
         return;
       }
@@ -314,6 +318,21 @@ export default function WelcomeScreen() {
                 </div>
 
                 <div className="flex flex-col gap-2 text-left">
+                  <label htmlFor="reg-username" className="font-bold text-foreground ml-2">Nombre de Usuario</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent"><User className="w-5 h-5" /></div>
+                    <input
+                      id="reg-username" type="text" value={regUsername}
+                      onChange={(e) => setRegUsername(e.target.value.replace(/\s/g, ''))}
+                      placeholder={regFullname.trim() ? regFullname.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'.') : 'Ej. juan.perez'}
+                      className="w-full pl-12 pr-6 py-3 rounded-2xl border-4 border-accent/20 focus:border-accent focus:outline-none bg-white/80 dark:bg-black/20 text-lg font-bold transition-all shadow-inner"
+                      required disabled={isRegistering}
+                    />
+                  </div>
+                  <p className="text-xs opacity-60 ml-2">Este será tu nombre de acceso. Sin espacios.</p>
+                </div>
+
+                <div className="flex flex-col gap-2 text-left">
                   <label htmlFor="reg-password" className="font-bold text-foreground ml-2">Contraseña</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent"><Lock className="w-6 h-6" /></div>
@@ -352,7 +371,7 @@ export default function WelcomeScreen() {
 
                 <button
                   type="submit"
-                  disabled={!regFullname.trim() || !regPassword.trim() || !regPasswordConfirm.trim() || isRegistering}
+                  disabled={!regFullname.trim() || !regUsername.trim() || !regPassword.trim() || !regPasswordConfirm.trim() || isRegistering}
                   className="group relative flex items-center justify-center gap-3 w-full bg-gradient-to-r from-accent to-pink-600 hover:from-pink-600 hover:to-accent text-white font-display font-bold text-2xl py-4 px-8 rounded-2xl shadow-[0_8px_0_#be185d] hover:shadow-[0_4px_0_#be185d] hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                   {isRegistering ? <span className="animate-pulse">Creando cuenta...</span> : <>¡Registrarme! 🎮</>}
