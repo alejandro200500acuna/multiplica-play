@@ -14,12 +14,14 @@ interface GameState {
   correctAnswers: number;
   wrongAnswers: number;
   passed: boolean;
+  timeTaken: number;
+  isNewRecord: boolean;
   
   setStep: (step: Step) => void;
   setUser: (name: string, id: string, role: string) => void;
   setTables: (tables: number[]) => void;
   setGame: (game: GameType) => void;
-  setResults: (correct: number, wrong: number, percentage: number, passed: boolean) => void;
+  setResults: (correct: number, wrong: number, percentage: number, passed: boolean, timeTaken?: number, isNewRecord?: boolean) => void;
   resetGame: () => void;
   resetAll: () => void;
 }
@@ -35,13 +37,15 @@ export const useStore = create<GameState>((set) => ({
   correctAnswers: 0,
   wrongAnswers: 0,
   passed: false,
+  timeTaken: 0,
+  isNewRecord: false,
   
   setStep: (step) => set({ currentStep: step }),
   setUser: (name, id, role) => set({ studentName: name, studentId: id, role: role as any }),
   setTables: (tables) => set({ selectedTables: tables }),
   setGame: (game) => set({ currentGame: game }),
-  setResults: (correct, wrong, percentage, passed) => 
-    set({ correctAnswers: correct, wrongAnswers: wrong, scorePercentage: percentage, passed }),
-  resetGame: () => set({ currentStep: 'GAMES', currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false }),
-  resetAll: () => set({ currentStep: 'WELCOME', studentName: '', studentId: null, role: null, selectedTables: [], currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false }),
+  setResults: (correct, wrong, percentage, passed, timeTaken = 0, isNewRecord = false) => 
+    set({ correctAnswers: correct, wrongAnswers: wrong, scorePercentage: percentage, passed, timeTaken, isNewRecord }),
+  resetGame: () => set({ currentStep: 'GAMES', currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false, timeTaken: 0, isNewRecord: false }),
+  resetAll: () => set({ currentStep: 'WELCOME', studentName: '', studentId: null, role: null, selectedTables: [], currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false, timeTaken: 0, isNewRecord: false }),
 }));

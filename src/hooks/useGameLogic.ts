@@ -18,6 +18,7 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
   const [wrongCount, setWrongCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [gameAnswers, setGameAnswers] = useState<any[]>([]);
+  const [startTime, setStartTime] = useState<number>(0);
 
   useEffect(() => {
     // Generate questions
@@ -57,6 +58,7 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
     }
     
     setQuestions(newQuestions);
+    setStartTime(Date.now());
   }, []);
 
   const handleAnswer = (userAnswer: number, isCorrect: boolean) => {
@@ -84,14 +86,31 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
 
   const finishGame = async (finalCorrect: number, finalWrong: number) => {
     setIsFinished(true);
+    const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
     const percentage = Math.round((finalCorrect / totalQuestions) * 100);
     const passed = percentage >= 50;
     
-    setResults(finalCorrect, finalWrong, percentage, passed);
-    
-    // Save to Supabase
+    let isNewRecord = false;
+
     try {
       if (studentId && studentId !== 'fallback-id') {
+        // Fetch previous best time for this game where student passed
+        const { data: previousBest } = await supabase
+          .from('practice_sessions')
+          .select('duration_seconds')
+          .eq('student_id', studentId)
+          .eq('game_type', gameType)
+          .eq('passed', true)
+          .order('duration_seconds', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (passed) {
+          if (!previousBest || (previousBest.duration_seconds > 0 && durationSeconds < previousBest.duration_seconds)) {
+            isNewRecord = true;
+          }
+        }
+
         const { data: sessionData, error: sessionError } = await supabase
           .from('practice_sessions')
           .insert({
@@ -101,25 +120,19 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
             score_percentage: percentage,
             correct_answers: finalCorrect,
             wrong_answers: finalWrong,
-            passed: passed
+            passed: passed,
+            duration_seconds: durationSeconds
           })
           .select()
           .single();
           
         if (sessionError) throw sessionError;
-        
-        // Optionally insert answers
-        /*
-        if (sessionData && gameAnswers.length > 0) {
-          const answersToInsert = gameAnswers.map(ans => ({ ...ans, session_id: sessionData.id }));
-          await supabase.from('practice_answers').insert(answersToInsert);
-        }
-        */
       }
     } catch (error) {
       console.error("Error saving session", error);
     }
 
+    setResults(finalCorrect, finalWrong, percentage, passed, durationSeconds, isNewRecord);
     setStep('RESULTS');
   };
 

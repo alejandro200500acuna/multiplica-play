@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, LayoutGrid, LogOut, Star, Trophy, Frown } from 'lucide-react';
+import { RefreshCw, LayoutGrid, LogOut, Star, Trophy, Frown, Clock, Flame } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import confetti from 'canvas-confetti';
 
 export default function ResultsScreen() {
-  const { studentName, scorePercentage, correctAnswers, passed, resetGame, resetAll, setStep } = useStore();
+  const { studentName, scorePercentage, correctAnswers, passed, resetGame, resetAll, setStep, timeTaken, isNewRecord } = useStore();
 
   useEffect(() => {
     if (passed) {
@@ -29,6 +29,14 @@ export default function ResultsScreen() {
       return () => clearInterval(interval);
     }
   }, [passed]);
+
+  const formatTime = (seconds: number) => {
+    if (!seconds) return '0s';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  };
 
   return (
     <motion.div 
@@ -64,15 +72,35 @@ export default function ResultsScreen() {
         {studentName}, has obtenido {scorePercentage}%
       </p>
 
-      <div className="grid grid-cols-2 gap-4 w-full mb-10">
-        <div className="bg-success text-white py-4 rounded-2xl flex flex-col items-center justify-center shadow-inner">
-          <span className="text-sm font-bold opacity-80 uppercase tracking-widest text-center">Correctas</span>
-          <span className="text-4xl font-display font-bold">{correctAnswers}</span>
+      {isNewRecord && (
+        <motion.div
+          initial={{ scale: 0.8, y: 20, opacity: 0 }}
+          animate={{ scale: 1, y: 0, opacity: 1 }}
+          transition={{ type: "spring", bounce: 0.5 }}
+          className="bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold px-6 py-3 rounded-full mb-6 shadow-[0_0_15px_rgba(249,115,22,0.5)] flex items-center justify-center gap-2 w-full border-2 border-white/20"
+        >
+          <Flame className="w-6 h-6 text-yellow-300 animate-pulse" />
+          ¡Has superado tu tiempo de respuesta anterior!
+          <Flame className="w-6 h-6 text-yellow-300 animate-pulse" />
+        </motion.div>
+      )}
+
+      <div className="grid grid-cols-3 gap-2 md:gap-4 w-full mb-10">
+        <div className="bg-success text-white py-4 md:px-2 rounded-2xl flex flex-col items-center justify-center shadow-inner">
+          <span className="text-[10px] md:text-xs font-bold opacity-80 uppercase tracking-widest text-center leading-tight mb-1">Correctas</span>
+          <span className="text-3xl md:text-4xl font-display font-bold">{correctAnswers}</span>
         </div>
-        <div className="bg-error text-white py-4 rounded-2xl flex flex-col items-center justify-center shadow-inner">
-          <span className="text-sm font-bold opacity-80 uppercase tracking-widest text-center">Incorrectas</span>
-          <span className="text-4xl font-display font-bold">
+        <div className="bg-error text-white py-4 md:px-2 rounded-2xl flex flex-col items-center justify-center shadow-inner">
+          <span className="text-[10px] md:text-xs font-bold opacity-80 uppercase tracking-widest text-center leading-tight mb-1">Incorrectas</span>
+          <span className="text-3xl md:text-4xl font-display font-bold">
             {passed && scorePercentage === 100 ? 0 : Math.round((correctAnswers / (scorePercentage/100)) - correctAnswers)}
+          </span>
+        </div>
+        <div className="bg-primary text-white py-4 md:px-2 rounded-2xl flex flex-col items-center justify-center shadow-inner">
+          <span className="text-[10px] md:text-xs font-bold opacity-80 uppercase tracking-widest text-center leading-tight mb-1">Tiempo</span>
+          <span className="text-2xl md:text-3xl font-display font-bold flex items-center gap-1">
+            <Clock className="w-4 h-4 md:w-5 md:h-5 opacity-70 hidden md:block" />
+            {formatTime(timeTaken)}
           </span>
         </div>
       </div>
@@ -86,7 +114,7 @@ export default function ResultsScreen() {
           className="flex-1 flex items-center justify-center gap-2 bg-primary text-white font-bold py-4 px-6 rounded-2xl shadow-[0_6px_0_var(--color-primary-dark)] hover:shadow-[0_2px_0_var(--color-primary-dark)] hover:translate-y-[4px] transition-all"
         >
           <RefreshCw className="w-5 h-5" />
-          Reintentar Juego
+          Reintentar
         </button>
         <button
           onClick={() => {
