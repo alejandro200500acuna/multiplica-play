@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { supabase } from '@/lib/supabase';
-import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw } from 'lucide-react';
+import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw, Trophy, Star, Clock, Medal } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
@@ -18,6 +18,11 @@ export default function AdminDashboard() {
   const [newUserRole, setNewUserRole] = useState('student');
   const [isCreating, setIsCreating] = useState(false);
   const [createMsg, setCreateMsg] = useState('');
+
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<'RAPID' | 'TRUE_FALSE' | 'INPUT' | 'MEMORY'>('RAPID');
 
   const fetchStudents = async () => {
     setIsLoading(true);
@@ -37,9 +42,42 @@ export default function AdminDashboard() {
     setIsLoading(false);
   };
 
+  const fetchLeaderboard = async () => {
+    setIsLoadingLeaderboard(true);
+    const { data } = await supabase
+      .from('practice_sessions')
+      .select('score_percentage, duration_seconds, game_type, student_id, users!inner(full_name, role)')
+      .eq('game_type', selectedGame)
+      .eq('passed', true) 
+      .eq('users.role', 'student') 
+      .order('score_percentage', { ascending: false })
+      .order('duration_seconds', { ascending: true })
+      .limit(100);
+
+    if (data) {
+      const uniqueStudents = new Map();
+      data.forEach(session => {
+        if (!uniqueStudents.has(session.student_id)) {
+          uniqueStudents.set(session.student_id, {
+            ...session,
+            full_name: (session.users as any).full_name
+          });
+        }
+      });
+      setLeaderboard(Array.from(uniqueStudents.values()).slice(0, 5));
+    } else {
+      setLeaderboard([]);
+    }
+    setIsLoadingLeaderboard(false);
+  };
+
   useEffect(() => {
     fetchStudents();
   }, []);
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [selectedGame]);
 
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -280,6 +318,88 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Leaderboard Section */}
+        <div className="mt-8 bg-white/50 dark:bg-black/30 p-6 md:p-8 rounded-3xl shadow-inner border border-white/20">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <h3 className="text-2xl font-bold flex items-center gap-3">
+              <Trophy className="w-8 h-8 text-yellow-500" />
+              Salón de la Fama (Top 5)
+            </h3>
+            <div className="flex bg-black/10 dark:bg-white/10 p-1 rounded-xl w-full md:w-auto overflow-x-auto">
+              {[
+                { id: 'RAPID', label: 'Rápido' },
+                { id: 'TRUE_FALSE', label: 'Verdadero o Falso' },
+                { id: 'INPUT', label: 'Teclado' },
+                { id: 'MEMORY', label: 'Memoria' }
+              ].map(game => (
+                <button
+                  key={game.id}
+                  onClick={() => setSelectedGame(game.id as any)}
+                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap ${
+                    selectedGame === game.id 
+                      ? 'bg-white dark:bg-black/50 text-primary shadow-sm' 
+                      : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  {game.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white/50 dark:bg-black/30 rounded-3xl shadow-inner border border-white/20 overflow-hidden relative min-h-[150px]">
+            {isLoadingLeaderboard && (
+              <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] flex items-center justify-center z-10 transition-all">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            )}
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-black/5 dark:bg-white/5">
+                  <tr>
+                    <th className="px-6 py-4 font-bold opacity-70 w-24 text-center">Rango</th>
+                    <th className="px-6 py-4 font-bold opacity-70">Estudiante</th>
+                    <th className="px-6 py-4 font-bold opacity-70 text-center">Porcentaje de Éxito</th>
+                    <th className="px-6 py-4 font-bold opacity-70 text-center">Tiempo Récord</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-black/5 dark:divide-white/5">
+                  {leaderboard.map((student, index) => (
+                    <tr key={index} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                      <td className="px-6 py-4 text-center">
+                        {index === 0 ? <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-400 text-yellow-900 font-bold border-2 border-yellow-200 shadow-md animate-pulse">1</span> :
+                         index === 1 ? <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-700 font-bold border-2 border-white shadow-md">2</span> :
+                         index === 2 ? <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-600 text-white font-bold border-2 border-amber-300 shadow-md">3</span> :
+                         <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 font-bold">{index + 1}</span>}
+                      </td>
+                      <td className="px-6 py-4 font-bold text-lg">{student.full_name}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full font-bold">
+                          {student.score_percentage}%
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center font-mono">
+                        <span className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-700 dark:text-blue-400 px-3 py-1 rounded-full font-bold">
+                          <Clock className="w-4 h-4" />
+                          {Math.floor(student.duration_seconds / 60)}:{(student.duration_seconds % 60).toString().padStart(2, '0')}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {leaderboard.length === 0 && !isLoadingLeaderboard && (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-12 text-center opacity-60 font-medium">
+                        Aún no hay puntuaciones perfectas para esta categoría.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
