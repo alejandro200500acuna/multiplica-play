@@ -21,12 +21,16 @@ export default function AdminDashboard() {
 
   const fetchStudents = async () => {
     setIsLoading(true);
-    const { data } = await supabase
+    let query = supabase
       .from('users')
       .select('*, practice_sessions(count)')
-      .eq('role', 'student') // we can still just fetch students in the list, or we could remove the filter
       .order('created_at', { ascending: false });
+      
+    if (role === 'profesor') {
+      query = query.eq('role', 'student');
+    }
     
+    const { data } = await query;
     if (data) {
       setStudents(data);
     }
@@ -178,7 +182,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold flex items-center gap-3">
                 <Play className="w-6 h-6 text-secondary" />
-                Estudiantes Registrados ({students.length})
+                {role === 'profesor' ? 'Estudiantes Registrados' : 'Usuarios Registrados'} ({students.length})
               </h3>
               <button
                 onClick={fetchStudents}
@@ -208,6 +212,7 @@ export default function AdminDashboard() {
                         <th className="px-6 py-4 text-left font-bold opacity-70">Nombre</th>
                         <th className="px-6 py-4 text-left font-bold opacity-70">Usuario</th>
                         <th className="px-6 py-4 text-left font-bold opacity-70">Contraseña</th>
+                        {role === 'admin' && <th className="px-6 py-4 text-left font-bold opacity-70">Rol</th>}
                         <th className="px-6 py-4 text-center font-bold opacity-70">Sesiones Jugadas</th>
                       </tr>
                     </thead>
@@ -217,6 +222,17 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 font-bold">{st.full_name}</td>
                           <td className="px-6 py-4 opacity-80">{st.username}</td>
                           <td className="px-6 py-4 opacity-80 font-mono">{st.password}</td>
+                          {role === 'admin' && (
+                            <td className="px-6 py-4 capitalize font-bold text-sm">
+                              <span className={`px-3 py-1 rounded-full ${
+                                st.role === 'admin' ? 'bg-primary/20 text-primary-dark' : 
+                                st.role === 'profesor' ? 'bg-secondary/20 text-secondary-dark' : 
+                                'bg-black/10 text-foreground/80'
+                              }`}>
+                                {st.role}
+                              </span>
+                            </td>
+                          )}
                           <td className="px-6 py-4 text-center">
                             <span className="bg-secondary/20 text-secondary-dark px-3 py-1 rounded-full font-bold text-sm">
                               {st.practice_sessions?.[0]?.count || 0}
