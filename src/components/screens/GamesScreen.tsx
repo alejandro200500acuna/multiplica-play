@@ -6,6 +6,7 @@ import { ChevronLeft, Zap, CheckCircle2, Edit3, Puzzle, Trophy, Medal, RotateCcw
 import { useStore, GameType } from '@/store/useStore';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
+import Leaderboard from '@/components/Leaderboard';
 
 const GAMES: { id: GameType; name: string; description: string; icon: any; color: string; shadow: string }[] = [
   {
@@ -206,6 +207,11 @@ export default function GamesScreen() {
             Empezar de nuevo
           </button>
         </motion.div>
+      </div>
+
+      {/* Global Leaderboard visible to all */}
+      <div className="w-full max-w-6xl mx-auto mt-6">
+        <Leaderboard />
       </div>
 
       {/* Reset Confirmation Modal */}
