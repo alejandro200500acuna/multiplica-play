@@ -22,10 +22,25 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
 
   useEffect(() => {
     // Generate questions
+    const allCombinations: {num1: number, num2: number}[] = [];
+    selectedTables.forEach(table => {
+      // 1 to 10 as requested
+      for (let i = 1; i <= 10; i++) {
+        allCombinations.push({ num1: table, num2: i });
+      }
+    });
+
+    // Shuffle combinations optimally
+    for (let i = allCombinations.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allCombinations[i], allCombinations[j]] = [allCombinations[j], allCombinations[i]];
+    }
+
     const newQuestions: Question[] = [];
     for (let i = 0; i < totalQuestions; i++) {
-      const num1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
-      const num2 = Math.floor(Math.random() * 11) + 2; // 2 to 12
+      const combo = allCombinations[i % allCombinations.length];
+      const num1 = combo.num1;
+      const num2 = combo.num2;
       const correctAnswer = num1 * num2;
       
       let options: number[] | undefined;
@@ -36,13 +51,15 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
         optionSet.add(correctAnswer);
         while(optionSet.size < 4) {
           const fakeNum1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
-          const fakeNum2 = Math.floor(Math.random() * 11) + 2;
+          const fakeNum2 = Math.floor(Math.random() * 10) + 1; // 1 to 10
           const fakeAnswer = fakeNum1 * fakeNum2;
           // Add some randomness if needed just to fill options
-          if (fakeAnswer !== correctAnswer) {
+          if (fakeAnswer !== correctAnswer && fakeAnswer > 0) {
             optionSet.add(fakeAnswer);
           } else {
-            optionSet.add(correctAnswer + Math.floor(Math.random() * 10) + 1);
+            const randomOffset = Math.floor(Math.random() * 8) + 1;
+            const fakeVal = correctAnswer + (Math.random() > 0.5 ? randomOffset : -randomOffset);
+            optionSet.add(Math.max(1, fakeVal)); // avoid negative or zero
           }
         }
         options = Array.from(optionSet).sort(() => Math.random() - 0.5);
