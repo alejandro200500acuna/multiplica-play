@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { supabase } from '@/lib/supabase';
-import { UserPlus, Users, LogOut, Loader2, Play } from 'lucide-react';
+import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
@@ -160,17 +160,32 @@ export default function AdminDashboard() {
 
           {/* Right Col: List of students */}
           <div className="lg:col-span-2">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-              <Play className="w-6 h-6 text-secondary" />
-              Estudiantes Registrados ({students.length})
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold flex items-center gap-3">
+                <Play className="w-6 h-6 text-secondary" />
+                Estudiantes Registrados ({students.length})
+              </h3>
+              <button
+                onClick={fetchStudents}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 rounded-full font-bold transition-all text-sm disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Actualizar Lista
+              </button>
+            </div>
             
-            {isLoading ? (
+            {isLoading && students.length === 0 ? (
               <div className="flex justify-center p-12">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
               </div>
             ) : (
-              <div className="bg-white/50 dark:bg-black/30 rounded-3xl shadow-inner border border-white/20 overflow-hidden">
+              <div className="bg-white/50 dark:bg-black/30 rounded-3xl shadow-inner border border-white/20 overflow-hidden relative">
+                {isLoading && (
+                  <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] flex items-center justify-center z-10 transition-all">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                )}
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-black/5 dark:bg-white/5">
