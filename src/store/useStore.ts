@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Step = 'WELCOME' | 'MODE_SELECT' | 'TABLES' | 'GAMES' | 'PLAYING' | 'RESULTS' | 'ADMIN_DASHBOARD';
+export type Step = 'WELCOME' | 'MODE_SELECT' | 'TABLES' | 'GAMES' | 'PLAYING' | 'RESULTS' | 'ADMIN_DASHBOARD' | 'COMPETITION_LOBBY' | 'COMPETITION_GAME' | 'COMPETITION_RESULT';
 export type GameType = 'RAPID' | 'TRUE_FALSE' | 'INPUT' | 'MEMORY' | null;
 
 interface GameState {
@@ -17,12 +17,15 @@ interface GameState {
   passed: boolean;
   timeTaken: number;
   isNewRecord: boolean;
+  competitionRoomId: string | null;
+  competitionIsPlayer1: boolean;
   
   setStep: (step: Step) => void;
   setUser: (name: string, id: string, role: string) => void;
   setTables: (tables: number[]) => void;
   setGame: (game: GameType) => void;
   setResults: (correct: number, wrong: number, percentage: number, passed: boolean, timeTaken?: number, isNewRecord?: boolean) => void;
+  setCompetitionRoom: (roomId: string, isPlayer1: boolean) => void;
   resetGame: () => void;
   resetAll: () => void;
 }
@@ -42,6 +45,8 @@ export const useStore = create<GameState>()(
       passed: false,
       timeTaken: 0,
       isNewRecord: false,
+      competitionRoomId: null,
+      competitionIsPlayer1: true,
       
       setStep: (step) => set({ currentStep: step }),
       setUser: (name, id, role) => set({ studentName: name, studentId: id, role: role as any }),
@@ -49,8 +54,9 @@ export const useStore = create<GameState>()(
       setGame: (game) => set({ currentGame: game }),
       setResults: (correct, wrong, percentage, passed, timeTaken = 0, isNewRecord = false) => 
         set({ correctAnswers: correct, wrongAnswers: wrong, scorePercentage: percentage, passed, timeTaken, isNewRecord }),
+      setCompetitionRoom: (roomId, isPlayer1) => set({ competitionRoomId: roomId, competitionIsPlayer1: isPlayer1 }),
       resetGame: () => set({ currentStep: 'GAMES', currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false, timeTaken: 0, isNewRecord: false }),
-      resetAll: () => set({ currentStep: 'WELCOME', studentName: '', studentId: null, role: null, selectedTables: [], currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false, timeTaken: 0, isNewRecord: false }),
+      resetAll: () => set({ currentStep: 'WELCOME', studentName: '', studentId: null, role: null, selectedTables: [], currentGame: null, scorePercentage: 0, correctAnswers: 0, wrongAnswers: 0, passed: false, timeTaken: 0, isNewRecord: false, competitionRoomId: null, competitionIsPlayer1: true }),
     }),
     {
       name: 'multiplica-play-storage'

@@ -9,6 +9,9 @@ import GamesScreen from '@/components/screens/GamesScreen';
 import PlayingScreen from '@/components/screens/PlayingScreen';
 import ResultsScreen from '@/components/screens/ResultsScreen';
 import AdminDashboard from '@/components/screens/AdminDashboard';
+import CompetitionLobby from '@/components/screens/CompetitionLobby';
+import CompetitionGame from '@/components/screens/CompetitionGame';
+import CompetitionResult from '@/components/screens/CompetitionResult';
 
 export default function Home() {
   const currentStep = useStore((state) => state.currentStep);
@@ -30,6 +33,9 @@ export default function Home() {
         {currentStep === 'GAMES' && <div className="w-full max-w-6xl"><GamesScreen /></div>}
         {currentStep === 'PLAYING' && <PlayingScreen />}
         {currentStep === 'RESULTS' && <ResultsScreen />}
+        {currentStep === 'COMPETITION_LOBBY' && <CompetitionLobby />}
+        {currentStep === 'COMPETITION_GAME' && <div className="w-full max-w-2xl"><CompetitionGame /></div>}
+        {currentStep === 'COMPETITION_RESULT' && <CompetitionResult />}
       </div>
     </main>
   );

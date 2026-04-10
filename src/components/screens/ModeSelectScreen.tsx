@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, Swords, LogOut, Lock } from 'lucide-react';
+import { BookOpen, Swords, LogOut } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 
 export default function ModeSelectScreen() {
@@ -53,17 +53,18 @@ export default function ModeSelectScreen() {
           </span>
         </motion.button>
 
-        {/* Competencia - Coming Soon */}
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-gray-500/30 opacity-70 relative overflow-hidden text-center cursor-not-allowed"
+        {/* Competencia - Live! */}
+        <motion.button
+          whileHover={{ scale: 1.03, y: -4 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setStep('COMPETITION_LOBBY')}
+          className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-accent hover:border-t-pink-400 transition-all duration-300 group cursor-pointer text-center relative overflow-hidden"
         >
-          {/* Coming Soon ribbon */}
-          <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 font-bold text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
-            <Lock className="w-3 h-3" /> Muy Pronto
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-accent to-pink-500 text-white font-bold text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-md animate-pulse">
+            ⚡ ¡En Vivo!
           </div>
 
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center shadow-lg grayscale">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-pink-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
             <Swords className="w-10 h-10 text-white" />
           </div>
           <div>
@@ -72,13 +73,10 @@ export default function ModeSelectScreen() {
               Desafía a otros estudiantes en tiempo real y demuestra quién es el más rápido.
             </p>
           </div>
-          <span className="mt-2 px-6 py-2 bg-gray-500/30 text-white/60 font-bold rounded-full text-sm">
-            Próximamente...
+          <span className="mt-2 px-6 py-2 bg-accent text-white font-bold rounded-full text-sm shadow-[0_4px_0_#be185d] group-hover:shadow-[0_2px_0_#be185d] group-hover:translate-y-[2px] transition-all">
+            ¡Competir ahora! ⚔️
           </span>
-
-          {/* Overlay subtle */}
-          <div className="absolute inset-0 bg-black/10 rounded-3xl pointer-events-none" />
-        </motion.div>
+        </motion.button>
       </div>
     </motion.div>
   );
