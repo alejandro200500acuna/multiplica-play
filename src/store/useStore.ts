@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Step = 'WELCOME' | 'MODE_SELECT' | 'TABLES' | 'GAMES' | 'PLAYING' | 'RESULTS' | 'ADMIN_DASHBOARD' | 'COMPETITION_LOBBY' | 'COMPETITION_GAME' | 'COMPETITION_RESULT';
+export type Step = 'WELCOME' | 'MODE_SELECT' | 'TABLES' | 'GAMES' | 'PLAYING' | 'RESULTS' | 'ADMIN_DASHBOARD' | 'COMPETITION_LOBBY' | 'COMPETITION_GAME' | 'COMPETITION_RESULT' | 'LEARN_TABLES';
 export type GameType = 'RAPID' | 'TRUE_FALSE' | 'INPUT' | 'MEMORY' | null;
 
 interface GameState {
