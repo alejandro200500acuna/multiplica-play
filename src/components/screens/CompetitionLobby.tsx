@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Plus, LogIn2, Copy, Check, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { Users, Plus, LogIn, Copy, Check, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { supabase } from '@/lib/supabase';
 
@@ -150,7 +150,7 @@ export default function CompetitionLobby() {
               onClick={() => { setMode('join'); setError(''); }}
               className="w-full p-6 rounded-2xl bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30 border-2 border-accent/30 hover:border-accent text-white font-bold text-xl flex items-center justify-center gap-3 transition-all"
             >
-              <LogIn2 className="w-6 h-6" />
+              <LogIn className="w-6 h-6" />
               Unirse a una Sala
             </button>
             {error && <p className="text-error text-center font-bold text-sm mt-1">{error}</p>}
