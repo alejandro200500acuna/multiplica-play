@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Step = 'WELCOME' | 'TABLES' | 'GAMES' | 'PLAYING' | 'RESULTS' | 'ADMIN_DASHBOARD';
+export type Step = 'WELCOME' | 'MODE_SELECT' | 'TABLES' | 'GAMES' | 'PLAYING' | 'RESULTS' | 'ADMIN_DASHBOARD';
 export type GameType = 'RAPID' | 'TRUE_FALSE' | 'INPUT' | 'MEMORY' | null;
 
 interface GameState {

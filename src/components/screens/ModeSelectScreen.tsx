@@ -1,0 +1,85 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { BookOpen, Swords, LogOut, Lock } from 'lucide-react';
+import { useStore } from '@/store/useStore';
+
+export default function ModeSelectScreen() {
+  const { studentName, setStep, resetAll } = useStore();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full max-w-2xl mx-auto flex flex-col items-center gap-8"
+    >
+      {/* Header */}
+      <div className="glass-panel p-6 md:p-10 rounded-3xl w-full text-center shadow-2xl border-t-4 border-t-primary relative">
+        <button
+          onClick={() => resetAll()}
+          className="absolute top-5 left-5 p-2 rounded-full hover:bg-error/10 text-error transition-colors"
+          title="Cerrar sesión"
+        >
+          <LogOut className="w-7 h-7" />
+        </button>
+
+        <span className="text-5xl mb-4 block">🎮</span>
+        <h2 className="text-3xl md:text-4xl font-display font-bold text-white title-shadow uppercase tracking-wide mb-2">
+          ¡Hola, {studentName}!
+        </h2>
+        <p className="text-foreground/70 font-medium text-lg">¿Cómo quieres jugar hoy?</p>
+      </div>
+
+      {/* Mode buttons */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        {/* Práctica Individual */}
+        <motion.button
+          whileHover={{ scale: 1.03, y: -4 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setStep('TABLES')}
+          className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-primary hover:border-t-secondary transition-all duration-300 group cursor-pointer text-center"
+        >
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <BookOpen className="w-10 h-10 text-white" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-display font-bold text-white mb-2">Práctica Individual</h3>
+            <p className="text-foreground/70 font-medium leading-snug">
+              Practica las tablas a tu ritmo, elige el juego y mejora tu puntuación.
+            </p>
+          </div>
+          <span className="mt-2 px-6 py-2 bg-primary text-white font-bold rounded-full text-sm shadow-[0_4px_0_var(--color-primary-dark)] group-hover:shadow-[0_2px_0_var(--color-primary-dark)] group-hover:translate-y-[2px] transition-all">
+            ¡Jugar ahora! →
+          </span>
+        </motion.button>
+
+        {/* Competencia - Coming Soon */}
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-gray-500/30 opacity-70 relative overflow-hidden text-center cursor-not-allowed"
+        >
+          {/* Coming Soon ribbon */}
+          <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 font-bold text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+            <Lock className="w-3 h-3" /> Muy Pronto
+          </div>
+
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center shadow-lg grayscale">
+            <Swords className="w-10 h-10 text-white" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-display font-bold text-white mb-2">Competencia</h3>
+            <p className="text-foreground/70 font-medium leading-snug">
+              Desafía a otros estudiantes en tiempo real y demuestra quién es el más rápido.
+            </p>
+          </div>
+          <span className="mt-2 px-6 py-2 bg-gray-500/30 text-white/60 font-bold rounded-full text-sm">
+            Próximamente...
+          </span>
+
+          {/* Overlay subtle */}
+          <div className="absolute inset-0 bg-black/10 rounded-3xl pointer-events-none" />
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}

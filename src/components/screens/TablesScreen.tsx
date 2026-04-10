@@ -13,6 +13,8 @@ export default function TablesScreen() {
   const [selected, setSelected] = useState<number[]>(initialSelected);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  const handleBack = () => setStep('MODE_SELECT');
+
   const toggleTable = (num: number) => {
     setSelected(prev => 
       prev.includes(num) ? prev.filter(t => t !== num) : [...prev, num]
@@ -39,11 +41,11 @@ export default function TablesScreen() {
       >
         <div className="flex items-center justify-between mb-8">
           <button 
-            onClick={() => setShowLogoutModal(true)}
-            className="p-2 rounded-full hover:bg-error/10 text-error transition-colors"
-            title="Cerrar sesión"
+            onClick={handleBack}
+            className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            title="Volver"
           >
-            <LogOut className="w-8 h-8" />
+            <LogOut className="w-8 h-8 rotate-180" />
           </button>
           <div className="flex-1 flex flex-col items-center">
             <h2 className="text-3xl md:text-5xl font-display font-bold text-center pr-10 title-shadow text-white uppercase tracking-wider">

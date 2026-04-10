@@ -140,7 +140,7 @@ export default function WelcomeScreen() {
       if (data.role === 'admin' || data.role === 'profesor') {
         setStep('ADMIN_DASHBOARD');
       } else {
-        setStep('TABLES');
+        setStep('MODE_SELECT');
       }
     } catch (err) {
       console.error('Error starting session:', err);
@@ -186,7 +186,7 @@ export default function WelcomeScreen() {
         return;
       }
       setUser(data.full_name, data.id, data.role);
-      setStep('TABLES');
+      setStep('MODE_SELECT');
     } catch (err) {
       setRegError('Error inesperado. Intenta de nuevo.');
       setIsRegistering(false);
