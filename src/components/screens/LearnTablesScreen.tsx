@@ -11,6 +11,10 @@ type Result = 'pending' | 'correct' | 'wrong';
 const TABLES = Array.from({ length: 9 }, (_, i) => i + 2); // 2-10
 const MULTIPLIERS = Array.from({ length: 10 }, (_, i) => i + 1); // 1-10
 
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
 const TABLE_COLORS: Record<number, string> = {
   2:  'from-violet-500 to-purple-700',
   3:  'from-blue-500 to-blue-700',
@@ -31,6 +35,7 @@ export default function LearnTablesScreen() {
   const [results, setResults] = useState<Result[]>(Array(10).fill('pending'));
   const [isComplete, setIsComplete] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [quizOrder, setQuizOrder] = useState<number[]>(MULTIPLIERS);
 
   const openTable = (t: number) => {
     setSelectedTable(t);
@@ -42,12 +47,16 @@ export default function LearnTablesScreen() {
   };
 
   const startQuiz = () => {
+    setQuizOrder(shuffle(MULTIPLIERS));
     setAnswers(Array(10).fill(''));
     setResults(Array(10).fill('pending'));
     setVerified(false);
     setIsComplete(false);
     setMode('quiz');
   };
+
+  // Map quiz row index → correct answer using shuffled order
+  const getCorrectAnswer = (rowIndex: number) => selectedTable * quizOrder[rowIndex];
 
   const handleAnswerChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // numbers only
@@ -58,7 +67,7 @@ export default function LearnTablesScreen() {
 
   const verify = () => {
     const newResults: Result[] = answers.map((ans, i) => {
-      const correct = selectedTable * MULTIPLIERS[i];
+      const correct = getCorrectAnswer(i);
       return parseInt(ans) === correct ? 'correct' : 'wrong';
     });
     setResults(newResults);
@@ -217,7 +226,7 @@ export default function LearnTablesScreen() {
           </div>
 
           <div className="flex flex-col gap-3">
-            {MULTIPLIERS.map((m, i) => {
+            {quizOrder.map((m, i) => {
               const r = results[i];
               const isCorrectRow = r === 'correct';
               return (
