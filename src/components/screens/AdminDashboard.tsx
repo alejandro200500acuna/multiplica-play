@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { supabase } from '@/lib/supabase';
-import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw, Trophy, Star, Clock, Medal } from 'lucide-react';
+import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw, Trophy, Clock, Trash2, BookOpen, AlertTriangle, X, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
@@ -23,6 +23,15 @@ export default function AdminDashboard() {
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false);
   const [selectedGame, setSelectedGame] = useState<'RAPID' | 'TRUE_FALSE' | 'INPUT' | 'MEMORY'>('RAPID');
+
+  // Clean practice records state
+  const [cleanStudentId, setCleanStudentId] = useState('');
+  const [cleanTableNum, setCleanTableNum] = useState<number | 'all'>(2);
+  const [isCleaning, setIsCleaning] = useState(false);
+  const [cleanMsg, setCleanMsg] = useState('');
+  const [showCleanConfirm, setShowCleanConfirm] = useState(false);
+  const [studentRecordCounts, setStudentRecordCounts] = useState<Record<number, number>>({});
+  const [isLoadingCounts, setIsLoadingCounts] = useState(false);
 
   const fetchStudents = async () => {
     setIsLoading(true);
@@ -69,6 +78,53 @@ export default function AdminDashboard() {
       setLeaderboard([]);
     }
     setIsLoadingLeaderboard(false);
+  };
+
+  // Load record counts per table for selected clean-student
+  const loadStudentRecordCounts = async (sid: string) => {
+    if (!sid) { setStudentRecordCounts({}); return; }
+    setIsLoadingCounts(true);
+    const { data } = await supabase
+      .from('table_practice_records')
+      .select('table_number')
+      .eq('student_id', sid);
+    if (data) {
+      const counts: Record<number, number> = {};
+      for (let t = 2; t <= 10; t++) counts[t] = 0;
+      data.forEach(r => { counts[r.table_number] = (counts[r.table_number] || 0) + 1; });
+      setStudentRecordCounts(counts);
+    }
+    setIsLoadingCounts(false);
+  };
+
+  const handleCleanStudentChange = (sid: string) => {
+    setCleanStudentId(sid);
+    setCleanMsg('');
+    setShowCleanConfirm(false);
+    loadStudentRecordCounts(sid);
+  };
+
+  const handleCleanConfirm = async () => {
+    if (!cleanStudentId) return;
+    setIsCleaning(true);
+    setCleanMsg('');
+    let query = supabase
+      .from('table_practice_records')
+      .delete()
+      .eq('student_id', cleanStudentId);
+    if (cleanTableNum !== 'all') {
+      query = query.eq('table_number', cleanTableNum);
+    }
+    const { error } = await query;
+    if (error) {
+      setCleanMsg('❌ Error al limpiar registros.');
+    } else {
+      const label = cleanTableNum === 'all' ? 'todas las tablas' : `tabla del ${cleanTableNum}`;
+      setCleanMsg(`✅ Registros de ${label} eliminados correctamente.`);
+      loadStudentRecordCounts(cleanStudentId);
+    }
+    setIsCleaning(false);
+    setShowCleanConfirm(false);
   };
 
   useEffect(() => {
@@ -400,6 +456,128 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        {/* ── Clean Practice Records Section ──────────────────────────────── */}
+        <div className="mt-8 bg-white/50 dark:bg-black/30 p-6 md:p-8 rounded-3xl shadow-inner border border-white/20">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center">
+              <Trash2 className="w-5 h-5 text-red-500" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Limpiar Registro de Práctica de Tablas</h3>
+              <p className="text-sm opacity-60">Elimina el historial de práctica del Modo Aprender por tabla o por alumno</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Student selector */}
+            <div>
+              <label className="text-sm font-bold opacity-80 mb-2 block">Selecciona el Estudiante</label>
+              <select
+                value={cleanStudentId}
+                onChange={e => handleCleanStudentChange(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-red-400 outline-none font-medium"
+              >
+                <option value="">-- Elige un estudiante --</option>
+                {students.filter(s => s.role === 'student').map(s => (
+                  <option key={s.id} value={s.id}>{s.full_name} ({s.username})</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Table selector */}
+            <div>
+              <label className="text-sm font-bold opacity-80 mb-2 block">Tabla a limpiar</label>
+              <select
+                value={cleanTableNum}
+                onChange={e => setCleanTableNum(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                disabled={!cleanStudentId}
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-red-400 outline-none font-medium disabled:opacity-40"
+              >
+                <option value="all">Todas las tablas</option>
+                {Array.from({ length: 9 }, (_, i) => i + 2).map(t => (
+                  <option key={t} value={t}>
+                    Tabla del {t}{studentRecordCounts[t] !== undefined ? ` (${studentRecordCounts[t]} ${studentRecordCounts[t] === 1 ? 'registro' : 'registros'})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Record count summary */}
+          {cleanStudentId && (
+            <div className="mt-4">
+              {isLoadingCounts ? (
+                <div className="flex items-center gap-2 text-sm opacity-60">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Cargando registros…
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2">
+                  {Array.from({ length: 9 }, (_, i) => i + 2).map(t => (
+                    <div
+                      key={t}
+                      className={`rounded-xl p-2 text-center text-xs font-bold transition-colors ${
+                        (studentRecordCounts[t] ?? 0) > 0
+                          ? 'bg-primary/20 text-primary-dark'
+                          : 'bg-black/5 dark:bg-white/5 opacity-40'
+                      }`}
+                    >
+                      <BookOpen className="w-3 h-3 mx-auto mb-0.5 opacity-70" />
+                      ×{t}
+                      <div className="text-[10px] opacity-70 font-normal">{studentRecordCounts[t] ?? 0} reg.</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Action button */}
+          <div className="mt-5 flex flex-col gap-3">
+            {!showCleanConfirm ? (
+              <button
+                onClick={() => setShowCleanConfirm(true)}
+                disabled={!cleanStudentId || isCleaning}
+                className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-colors"
+              >
+                <Trash2 className="w-5 h-5" />
+                Limpiar Registros
+              </button>
+            ) : (
+              <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-400 rounded-2xl p-4 flex flex-col gap-3">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm font-medium text-red-700 dark:text-red-300">
+                    ¿Confirmas eliminar los registros de{' '}
+                    <strong>{cleanTableNum === 'all' ? 'TODAS las tablas' : `la Tabla del ${cleanTableNum}`}</strong>{' '}
+                    de este estudiante? Esta acción no se puede deshacer.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowCleanConfirm(false)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl font-bold bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
+                  >
+                    <X className="w-4 h-4" /> Cancelar
+                  </button>
+                  <button
+                    onClick={handleCleanConfirm}
+                    disabled={isCleaning}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl font-bold bg-red-500 hover:bg-red-600 text-white shadow transition-colors text-sm disabled:opacity-50"
+                  >
+                    {isCleaning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                    {isCleaning ? 'Limpiando…' : 'Sí, eliminar'}
+                  </button>
+                </div>
+              </div>
+            )}
+            {cleanMsg && (
+              <p className={`text-center font-bold text-sm ${cleanMsg.includes('✅') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                {cleanMsg}
+              </p>
+            )}
           </div>
         </div>
       </div>

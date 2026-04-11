@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Eye, PenLine, CheckCircle2, RotateCcw, ChevronRight, Home } from 'lucide-react';
+import { ArrowLeft, Eye, PenLine, CheckCircle2, RotateCcw, ChevronRight, Home, ClipboardList, Star, CalendarDays } from 'lucide-react';
 import { useStore } from '@/store/useStore';
+import { supabase } from '@/lib/supabase';
 
 type Mode = 'select' | 'study' | 'quiz';
 type Result = 'pending' | 'correct' | 'wrong';
@@ -27,8 +28,36 @@ const TABLE_COLORS: Record<number, string> = {
   10: 'from-indigo-500 to-violet-700',
 };
 
+interface PracticeRecord {
+  id: string;
+  score_percentage: number;
+  correct_answers: number;
+  total_questions: number;
+  practiced_at: string;
+}
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleString('es-CR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function ScoreBadge({ pct }: { pct: number }) {
+  const color =
+    pct === 100 ? 'bg-green-500 text-white' :
+    pct >= 70   ? 'bg-yellow-400 text-yellow-900' :
+                  'bg-red-400 text-white';
+  return (
+    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${color}`}>
+      {pct}%
+    </span>
+  );
+}
+
 export default function LearnTablesScreen() {
-  const { setStep } = useStore();
+  const { setStep, studentId } = useStore();
   const [mode, setMode] = useState<Mode>('select');
   const [selectedTable, setSelectedTable] = useState(2);
   const [answers, setAnswers] = useState<string[]>(Array(10).fill(''));
@@ -36,6 +65,56 @@ export default function LearnTablesScreen() {
   const [isComplete, setIsComplete] = useState(false);
   const [verified, setVerified] = useState(false);
   const [quizOrder, setQuizOrder] = useState<number[]>(MULTIPLIERS);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Records per table
+  const [tableRecords, setTableRecords] = useState<PracticeRecord[]>([]);
+  const [lastScores, setLastScores] = useState<Record<number, number | null>>({});
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Load last score for each table (for the grid badges)
+  const loadLastScores = useCallback(async () => {
+    if (!studentId) return;
+    const scores: Record<number, number | null> = {};
+    // Fetch max 1 record per table in one query
+    const { data } = await supabase
+      .from('table_practice_records')
+      .select('table_number, score_percentage, practiced_at')
+      .eq('student_id', studentId)
+      .order('practiced_at', { ascending: false });
+
+    if (data) {
+      for (const row of data) {
+        if (!(row.table_number in scores)) {
+          scores[row.table_number] = row.score_percentage;
+        }
+      }
+    }
+    setLastScores(scores);
+  }, [studentId]);
+
+  // Load history for the current table
+  const loadTableRecords = useCallback(async (tableNum: number) => {
+    if (!studentId) return;
+    const { data } = await supabase
+      .from('table_practice_records')
+      .select('id, score_percentage, correct_answers, total_questions, practiced_at')
+      .eq('student_id', studentId)
+      .eq('table_number', tableNum)
+      .order('practiced_at', { ascending: false })
+      .limit(20);
+    setTableRecords(data ?? []);
+  }, [studentId]);
+
+  useEffect(() => {
+    loadLastScores();
+  }, [loadLastScores]);
+
+  useEffect(() => {
+    if (mode !== 'select') {
+      loadTableRecords(selectedTable);
+    }
+  }, [mode, selectedTable, loadTableRecords]);
 
   const openTable = (t: number) => {
     setSelectedTable(t);
@@ -43,6 +122,7 @@ export default function LearnTablesScreen() {
     setResults(Array(10).fill('pending'));
     setVerified(false);
     setIsComplete(false);
+    setShowHistory(false);
     setMode('study');
   };
 
@@ -55,14 +135,30 @@ export default function LearnTablesScreen() {
     setMode('quiz');
   };
 
-  // Map quiz row index → correct answer using shuffled order
   const getCorrectAnswer = (rowIndex: number) => selectedTable * quizOrder[rowIndex];
 
   const handleAnswerChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // numbers only
+    if (!/^\d*$/.test(value)) return;
     const next = [...answers];
     next[index] = value;
     setAnswers(next);
+  };
+
+  const saveRecord = async (correctCount: number) => {
+    if (!studentId) return;
+    setIsSaving(true);
+    const pct = Math.round((correctCount / 10) * 100);
+    await supabase.from('table_practice_records').insert({
+      student_id: studentId,
+      table_number: selectedTable,
+      score_percentage: pct,
+      correct_answers: correctCount,
+      total_questions: 10,
+    });
+    setIsSaving(false);
+    // Refresh caches
+    await loadLastScores();
+    await loadTableRecords(selectedTable);
   };
 
   const verify = () => {
@@ -73,10 +169,14 @@ export default function LearnTablesScreen() {
     setResults(newResults);
     setVerified(true);
 
+    const correctCount = newResults.filter(r => r === 'correct').length;
+
     if (newResults.every(r => r === 'correct')) {
       setIsComplete(true);
+      saveRecord(correctCount);
     } else {
-      // Clear wrong answers for retry
+      // Save partial attempt record
+      saveRecord(correctCount);
       setTimeout(() => {
         const retryAnswers = answers.map((ans, i) =>
           newResults[i] === 'correct' ? ans : ''
@@ -124,7 +224,7 @@ export default function LearnTablesScreen() {
         </div>
       </div>
 
-      {/* SELECT MODE: Table picker */}
+      {/* SELECT MODE: Table picker with last-score badges */}
       {mode === 'select' && (
         <div className="glass-panel p-6 md:p-8 rounded-3xl shadow-xl">
           <p className="text-center font-bold text-foreground/70 mb-6">¿Qué tabla quieres aprender hoy?</p>
@@ -135,10 +235,15 @@ export default function LearnTablesScreen() {
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => openTable(t)}
-                className={`bg-gradient-to-br ${TABLE_COLORS[t]} text-white font-display font-bold text-4xl py-6 rounded-2xl shadow-lg flex flex-col items-center gap-1`}
+                className={`bg-gradient-to-br ${TABLE_COLORS[t]} text-white font-display font-bold text-4xl py-6 rounded-2xl shadow-lg flex flex-col items-center gap-1 relative`}
               >
                 {t}
                 <span className="text-xs font-sans font-medium opacity-80">Ver tabla</span>
+                {lastScores[t] !== undefined && lastScores[t] !== null && (
+                  <div className="absolute top-2 right-2">
+                    <ScoreBadge pct={lastScores[t]!} />
+                  </div>
+                )}
               </motion.button>
             ))}
           </div>
@@ -195,6 +300,31 @@ export default function LearnTablesScreen() {
               <PenLine className="w-5 h-5" /> ¡Repasar!
             </motion.button>
           </div>
+
+          {/* History for this table */}
+          {tableRecords.length > 0 && (
+            <div className="mt-5">
+              <button
+                onClick={() => setShowHistory(v => !v)}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl font-bold text-sm bg-white/30 dark:bg-black/20 hover:bg-white/50 dark:hover:bg-black/30 transition-colors"
+              >
+                <ClipboardList className="w-4 h-4" />
+                {showHistory ? 'Ocultar historial' : `Ver historial (${tableRecords.length} práctica${tableRecords.length !== 1 ? 's' : ''})`}
+              </button>
+              <AnimatePresence>
+                {showHistory && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden mt-3"
+                  >
+                    <HistoryTable records={tableRecords} tableNumber={selectedTable} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </motion.div>
       )}
 
@@ -314,9 +444,19 @@ export default function LearnTablesScreen() {
           <p className="text-foreground/70 font-medium mb-2">
             ¡Todas las respuestas correctas! 🎉
           </p>
+          {isSaving && (
+            <p className="text-sm text-foreground/50 mb-2">Guardando registro…</p>
+          )}
           <div className="flex gap-2 justify-center mb-6 text-2xl">
             {Array(10).fill('😊').join(' ')}
           </div>
+
+          {/* Show last few records */}
+          {tableRecords.length > 0 && (
+            <div className="mb-6">
+              <HistoryTable records={tableRecords.slice(0, 5)} tableNumber={selectedTable} />
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
             <motion.button
@@ -343,5 +483,54 @@ export default function LearnTablesScreen() {
         </motion.div>
       )}
     </motion.div>
+  );
+}
+
+/* ── History Table subcomponent ─────────────────────────────────────────── */
+function HistoryTable({ records, tableNumber }: { records: PracticeRecord[]; tableNumber: number }) {
+  return (
+    <div className="rounded-2xl overflow-hidden border border-white/20 dark:border-white/10 bg-black/5 dark:bg-black/20">
+      <div className="flex items-center gap-2 px-4 py-2 bg-white/30 dark:bg-white/5 border-b border-white/20">
+        <ClipboardList className="w-4 h-4 opacity-60" />
+        <span className="text-sm font-bold opacity-70">Historial — Tabla del {tableNumber}</span>
+      </div>
+      <div className="divide-y divide-white/10">
+        {records.map((r, idx) => {
+          const isFirst = idx === 0;
+          const pctColor =
+            r.score_percentage === 100 ? 'text-green-500' :
+            r.score_percentage >= 70   ? 'text-yellow-500' :
+                                         'text-red-400';
+          return (
+            <motion.div
+              key={r.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.04 }}
+              className={`flex items-center justify-between px-4 py-2.5 text-sm ${isFirst ? 'bg-white/10' : ''}`}
+            >
+              <div className="flex items-center gap-2">
+                <CalendarDays className="w-3.5 h-3.5 opacity-40 flex-shrink-0" />
+                <span className="opacity-70">{formatDate(r.practiced_at)}</span>
+                {isFirst && (
+                  <span className="text-[10px] bg-secondary/30 text-secondary-dark px-1.5 py-0.5 rounded-full font-bold">
+                    Última
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="opacity-60">
+                  <Star className="w-3 h-3 inline mr-0.5" />
+                  {r.correct_answers}/{r.total_questions}
+                </span>
+                <span className={`font-display font-bold text-base ${pctColor}`}>
+                  {r.score_percentage}%
+                </span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
