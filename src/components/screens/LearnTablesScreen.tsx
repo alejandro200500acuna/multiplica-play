@@ -200,7 +200,9 @@ export default function LearnTablesScreen() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-2xl mx-auto flex flex-col gap-6"
+      className={`w-full mx-auto flex flex-col gap-6 ${
+        mode === 'study' ? 'max-w-4xl' : 'max-w-2xl'
+      }`}
     >
       {/* Header */}
       <div className="glass-panel p-5 md:p-6 rounded-3xl shadow-xl border-t-4 border-t-secondary flex items-center gap-4">
@@ -256,75 +258,134 @@ export default function LearnTablesScreen() {
         </div>
       )}
 
-      {/* STUDY MODE: Full table display */}
+      {/* STUDY MODE: Two-column layout — table | history */}
       {mode === 'study' && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass-panel p-6 md:p-8 rounded-3xl shadow-xl"
+          className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start"
         >
-          <div className={`bg-gradient-to-br ${color} rounded-2xl p-6 mb-6 text-white`}>
-            <h3 className="text-center text-2xl font-display font-bold mb-4 opacity-90">
-              Tabla del {selectedTable}
-            </h3>
-            <div className="flex flex-col gap-2">
-              {MULTIPLIERS.map(m => (
-                <motion.div
-                  key={m}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: m * 0.05 }}
-                  className="flex items-center justify-between bg-white/20 rounded-xl px-5 py-3 font-display font-bold text-xl"
-                >
-                  <span>{selectedTable} × {m}</span>
-                  <span className="opacity-50">=</span>
-                  <span className="text-2xl">{selectedTable * m}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => setMode('select')}
-              className="flex-1 py-3 rounded-2xl font-bold bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
-            >
-              <ArrowLeft className="w-5 h-5" /> Cambiar
-            </button>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={startQuiz}
-              className={`flex-1 py-3 rounded-2xl font-bold bg-gradient-to-r ${color} text-white shadow-lg flex items-center justify-center gap-2`}
-            >
-              <PenLine className="w-5 h-5" /> ¡Repasar!
-            </motion.button>
-          </div>
-
-          {/* History for this table */}
-          {tableRecords.length > 0 && (
-            <div className="mt-5">
-              <button
-                onClick={() => setShowHistory(v => !v)}
-                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl font-bold text-sm bg-white/30 dark:bg-black/20 hover:bg-white/50 dark:hover:bg-black/30 transition-colors"
-              >
-                <ClipboardList className="w-4 h-4" />
-                {showHistory ? 'Ocultar historial' : `Ver historial (${tableRecords.length} práctica${tableRecords.length !== 1 ? 's' : ''})`}
-              </button>
-              <AnimatePresence>
-                {showHistory && (
+          {/* LEFT: Table display */}
+          <div className="glass-panel p-6 rounded-3xl shadow-xl">
+            <div className={`bg-gradient-to-br ${color} rounded-2xl p-5 mb-5 text-white`}>
+              <h3 className="text-center text-2xl font-display font-bold mb-4 opacity-90">
+                Tabla del {selectedTable}
+              </h3>
+              <div className="flex flex-col gap-2">
+                {MULTIPLIERS.map(m => (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden mt-3"
+                    key={m}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: m * 0.05 }}
+                    className="flex items-center justify-between bg-white/20 rounded-xl px-4 py-2.5 font-display font-bold text-lg"
                   >
-                    <HistoryTable records={tableRecords} tableNumber={selectedTable} />
+                    <span>{selectedTable} × {m}</span>
+                    <span className="opacity-50">=</span>
+                    <span className="text-xl">{selectedTable * m}</span>
                   </motion.div>
-                )}
-              </AnimatePresence>
+                ))}
+              </div>
             </div>
-          )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setMode('select')}
+                className="flex-1 py-3 rounded-2xl font-bold bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
+              >
+                <ArrowLeft className="w-5 h-5" /> Cambiar
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={startQuiz}
+                className={`flex-1 py-3 rounded-2xl font-bold bg-gradient-to-r ${color} text-white shadow-lg flex items-center justify-center gap-2`}
+              >
+                <PenLine className="w-5 h-5" /> ¡Repasar!
+              </motion.button>
+            </div>
+          </div>
+
+          {/* RIGHT: Practice history always visible */}
+          <div className="flex flex-col gap-3">
+            <div className="glass-panel rounded-3xl shadow-xl overflow-hidden">
+              <div className={`flex items-center gap-3 px-5 py-4 bg-gradient-to-r ${color} text-white`}>
+                <ClipboardList className="w-5 h-5 opacity-90" />
+                <div>
+                  <p className="font-display font-bold text-base">Mis Prácticas</p>
+                  <p className="text-xs opacity-70">Tabla del {selectedTable}</p>
+                </div>
+                {tableRecords.length > 0 && (
+                  <span className="ml-auto text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">
+                    {tableRecords.length} {tableRecords.length === 1 ? 'intento' : 'intentos'}
+                  </span>
+                )}
+              </div>
+
+              {tableRecords.length === 0 ? (
+                <div className="flex flex-col items-center gap-3 py-10 px-5 text-center opacity-50">
+                  <ClipboardList className="w-10 h-10" />
+                  <p className="text-sm font-medium">Aún no hay prácticas registradas</p>
+                  <p className="text-xs">Presiona ¡Repasar! para comenzar</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-white/5">
+                  {tableRecords.map((r, idx) => {
+                    const isFirst = idx === 0;
+                    const pctColor =
+                      r.score_percentage === 100 ? 'text-green-400' :
+                      r.score_percentage >= 70   ? 'text-yellow-400' :
+                                                   'text-red-400';
+                    const bgColor =
+                      r.score_percentage === 100 ? 'bg-green-500/10' :
+                      r.score_percentage >= 70   ? 'bg-yellow-400/10' :
+                                                   'bg-red-400/10';
+                    return (
+                      <motion.div
+                        key={r.id}
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.04 }}
+                        className={`px-5 py-3 ${isFirst ? bgColor : ''}`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-1.5">
+                            {isFirst && (
+                              <span className="text-[10px] bg-secondary/30 text-secondary font-bold px-1.5 py-0.5 rounded-full">
+                                Última
+                              </span>
+                            )}
+                            <span className={`font-display font-bold text-lg ${pctColor}`}>
+                              {r.score_percentage}%
+                            </span>
+                          </div>
+                          <span className="flex items-center gap-1 text-xs opacity-50">
+                            <Star className="w-3 h-3" />
+                            {r.correct_answers}/{r.total_questions}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs opacity-40">
+                          <CalendarDays className="w-3 h-3" />
+                          {formatDate(r.practiced_at)}
+                        </div>
+                        {/* Mini progress bar */}
+                        <div className="mt-1.5 w-full bg-black/10 dark:bg-white/10 rounded-full h-1.5">
+                          <div
+                            className={`h-1.5 rounded-full transition-all ${
+                              r.score_percentage === 100 ? 'bg-green-400' :
+                              r.score_percentage >= 70   ? 'bg-yellow-400' :
+                                                           'bg-red-400'
+                            }`}
+                            style={{ width: `${r.score_percentage}%` }}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </motion.div>
       )}
 
