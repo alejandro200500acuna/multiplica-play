@@ -1,11 +1,24 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, Swords, LogOut, GraduationCap } from 'lucide-react';
 import { useStore } from '@/store/useStore';
+import RobotMascot, { RobotMood } from '@/components/RobotMascot';
+
+interface RobotState {
+  mood: RobotMood;
+  message: string;
+}
+
+const IDLE: RobotState        = { mood: 'wave',    message: '¡Hola! ¿Qué jugamos hoy? 👋' };
+const PRACTICE: RobotState    = { mood: 'excited', message: '¡A practicar! Tú puedes 💪' };
+const COMPETITION: RobotState = { mood: 'happy',   message: '¡Muéstrale quién manda! ⚔️' };
+const LEARN: RobotState       = { mood: 'think',   message: 'Estudia bien y aprenderás 📚' };
 
 export default function ModeSelectScreen() {
   const { studentName, setStep, resetAll } = useStore();
+  const [robot, setRobot] = useState<RobotState>(IDLE);
 
   return (
     <motion.div
@@ -30,12 +43,19 @@ export default function ModeSelectScreen() {
         <p className="text-foreground/70 font-medium text-lg">¿Cómo quieres jugar hoy?</p>
       </div>
 
+      {/* Robot mascot — centered above the cards */}
+      <div className="flex justify-center pt-2">
+        <RobotMascot mood={robot.mood} message={robot.message} size={130} />
+      </div>
+
       {/* Mode buttons */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
         {/* Práctica Individual */}
         <motion.button
           whileHover={{ scale: 1.03, y: -4 }}
           whileTap={{ scale: 0.97 }}
+          onHoverStart={() => setRobot(PRACTICE)}
+          onHoverEnd={() => setRobot(IDLE)}
           onClick={() => setStep('TABLES')}
           className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-primary hover:border-t-secondary transition-all duration-300 group cursor-pointer text-center"
         >
@@ -57,6 +77,8 @@ export default function ModeSelectScreen() {
         <motion.button
           whileHover={{ scale: 1.03, y: -4 }}
           whileTap={{ scale: 0.97 }}
+          onHoverStart={() => setRobot(COMPETITION)}
+          onHoverEnd={() => setRobot(IDLE)}
           onClick={() => setStep('COMPETITION_LOBBY')}
           className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-accent hover:border-t-pink-400 transition-all duration-300 group cursor-pointer text-center relative overflow-hidden"
         >
@@ -82,6 +104,8 @@ export default function ModeSelectScreen() {
         <motion.button
           whileHover={{ scale: 1.03, y: -4 }}
           whileTap={{ scale: 0.97 }}
+          onHoverStart={() => setRobot(LEARN)}
+          onHoverEnd={() => setRobot(IDLE)}
           onClick={() => setStep('LEARN_TABLES')}
           className="glass-panel p-8 rounded-3xl flex flex-col items-center gap-5 shadow-xl border-t-4 border-t-emerald-400 hover:border-t-green-400 transition-all duration-300 group cursor-pointer text-center relative overflow-hidden"
         >
