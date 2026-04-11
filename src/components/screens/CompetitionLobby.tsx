@@ -75,10 +75,13 @@ function ActiveDuelsPanel() {
   const [loading, setLoading] = useState(true);
 
   const fetchRooms = useCallback(async () => {
+    // Only show rooms created in the last 30 minutes to avoid stale/abandoned rooms
+    const since = new Date(Date.now() - 30 * 60 * 1000).toISOString();
     const { data } = await supabase
       .from('competition_rooms')
       .select('id, room_code, status, player1_name, player2_name, created_at')
       .in('status', ['waiting', 'playing'])
+      .gte('created_at', since)
       .order('created_at', { ascending: false })
       .limit(10);
     setRooms(data ?? []);
@@ -318,6 +321,14 @@ export default function CompetitionLobby() {
     setIsLoading(true);
     setError('');
     try {
+      // Clean up any previous waiting rooms from this player before creating a new one
+      if (studentId) {
+        await supabase
+          .from('competition_rooms')
+          .delete()
+          .eq('player1_id', studentId)
+          .eq('status', 'waiting');
+      }
       const code = generateCode();
       const questions = generateQuestions(10);
       const { data, error: dbErr } = await supabase.from('competition_rooms').insert({
