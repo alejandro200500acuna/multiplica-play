@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Aprende y practica las tablas de multiplicar jugando",
 };
 
+import AnimatedBackground from "@/components/AnimatedBackground";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,8 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${nunito.variable} ${fredoka.variable} antialiased min-h-screen flex flex-col`}>
-        {children}
+      <body className={`${nunito.variable} ${fredoka.variable} antialiased min-h-screen flex flex-col relative`}>
+        <AnimatedBackground />
+        <div className="relative z-10 flex-1 flex flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

@@ -15,8 +15,8 @@
 }
 
 :root {
-  --background: #fdf8f5;
-  --foreground: #2d3748;
+  --background: #0f172a; /* Deep Navy/Indigo */
+  --foreground: #f8fafc;
   --primary: #6366f1;
   --primary-dark: #4f46e5;
   --secondary: #fbbf24;
@@ -26,18 +26,10 @@
   --error: #ef4444;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1e1b4b;
-    --foreground: #e0e7ff;
-    --primary: #818cf8;
-    --primary-dark: #6366f1;
-    --secondary: #fbbf24;
-    --secondary-dark: #f59e0b;
-    --accent: #f472b6;
-    --success: #34d399;
-    --error: #f87171;
-  }
+/* Light mode overrides if ever needed, but main experience is dark */
+.light-theme {
+  --background: #fdf8f5;
+  --foreground: #2d3748;
 }
 
 body {
@@ -63,19 +55,12 @@ body::before {
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: rgba(30, 41, 59, 0.7); /* Darker slate/navy background */
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
-@media (prefers-color-scheme: dark) {
-  .glass-panel {
-    background: rgba(30, 27, 75, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  body::before {
-    opacity: 0.85;
-  }
+body::before {
+  opacity: 0.1; /* Very subtle dot overlay */
 }
