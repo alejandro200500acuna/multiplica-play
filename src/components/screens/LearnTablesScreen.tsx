@@ -442,10 +442,10 @@ export default function LearnTablesScreen() {
                     onChange={e => handleAnswerChange(i, e.target.value)}
                     disabled={isCorrectRow}
                     onKeyDown={e => { if (e.key === 'Enter') verify(); }}
-                    className={`w-20 text-center font-display font-bold text-2xl py-1 rounded-xl border-2 outline-none transition-all ${
+                    className={`w-24 text-center font-display font-bold text-3xl py-2 rounded-xl border-4 outline-none transition-all ${
                       isCorrectRow
-                        ? 'bg-green-100 dark:bg-green-900/30 border-green-400 text-green-700 dark:text-green-300'
-                        : 'bg-white dark:bg-black/30 border-primary/30 focus:border-primary text-foreground'
+                        ? 'bg-green-500/20 border-green-400 text-green-300'
+                        : 'bg-black/60 border-white/10 focus:border-primary text-white shadow-inner'
                     }`}
                     placeholder="?"
                   />

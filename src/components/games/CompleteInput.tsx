@@ -57,7 +57,7 @@ export default function CompleteInput() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   disabled={feedback !== null}
-                  className="w-32 md:w-48 text-center bg-white dark:bg-black/30 border-b-8 border-secondary focus:border-primary focus:outline-none rounded-2xl shadow-inner text-secondary-dark font-bold py-2 disabled:opacity-50"
+                  className="w-32 md:w-48 text-center bg-black/60 border-b-8 border-secondary focus:border-primary focus:outline-none rounded-2xl shadow-inner text-white font-bold py-4 text-5xl md:text-7xl placeholder:text-white/20"
                   autoFocus
                 />
               </motion.div>
