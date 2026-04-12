@@ -15,38 +15,43 @@
 }
 
 :root {
-  --background: #0f172a; /* Deep Navy/Indigo */
-  --foreground: #f8fafc;
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
+  --background: #0a0920; /* Darker, richer midnight blue/purple */
+  --foreground: #ffffff;
+  --primary: #8b5cf6; /* Vibrant Violet */
+  --primary-dark: #6d28d9;
   --secondary: #fbbf24;
   --secondary-dark: #f59e0b;
-  --accent: #ec4899;
-  --success: #10b981;
-  --error: #ef4444;
+  --accent: #f472b6; /* Soft Pink/Accent */
+  --success: #34d399;
+  --error: #fb7185;
 }
 
-/* Light mode overrides if ever needed, but main experience is dark */
+/* Light mode overrides - mostly ignored but kept for compatibility */
 .light-theme {
   --background: #fdf8f5;
-  --foreground: #2d3748;
+  --foreground: #1e293b;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.15) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 .title-shadow {
-  text-shadow: 2px 2px 0 var(--primary-dark), 4px 4px 0 var(--accent);
+  text-shadow: 0 4px 10px rgba(139, 92, 246, 0.5);
 }
 
 .glass-panel {
-  background: rgba(30, 41, 59, 0.7); /* Darker slate/navy background */
-  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
+
 
 

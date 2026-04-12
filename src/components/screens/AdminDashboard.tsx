@@ -219,7 +219,7 @@ export default function AdminDashboard() {
       animate={{ opacity: 1 }}
       className="w-full flex justify-center py-10"
     >
-      <div className="w-full max-w-6xl glass-panel p-6 md:p-10 rounded-3xl shadow-2xl border-t-4 border-t-primary">
+      <div className="w-full max-w-6xl glass-panel p-6 md:p-10 rounded-3xl shadow-2xl border-t-4 border-t-primary/50">
         <div className="flex justify-between items-center mb-10 border-b border-black/10 dark:border-white/10 pb-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Col: Create user */}
           <div className="lg:col-span-1">
-            <div className="bg-white/50 dark:bg-black/30 p-6 rounded-3xl shadow-inner border border-white/20">
+            <div className="glass-panel p-6 rounded-3xl border border-white/10">
               <div className="flex items-center gap-3 mb-6">
                 <UserPlus className="w-6 h-6 text-primary" />
                 <h3 className="text-xl font-bold">Nuevo Estudiante</h3>
@@ -253,36 +253,36 @@ export default function AdminDashboard() {
               <form onSubmit={handleCreateStudent} className="flex flex-col gap-4">
                 <div>
                   <label className="text-sm font-bold opacity-80 mb-1 block">Nombre Completo</label>
-                  <input
-                    type="text"
-                    value={newFullname}
-                    onChange={(e) => setNewFullname(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none"
-                    placeholder="Ej. Juan Pérez"
-                    required
-                  />
+                    <input
+                      type="text"
+                      value={newFullname}
+                      onChange={(e) => setNewFullname(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-black/40 border-2 border-white/5 focus:border-primary/50 outline-none font-bold text-white transition-all shadow-inner"
+                      placeholder="Ej. Juan Pérez"
+                      required
+                    />
                 </div>
                 <div>
                   <label className="text-sm font-bold opacity-80 mb-1 block">Usuario</label>
-                  <input
-                    type="text"
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none"
-                    placeholder="Ej. juanito"
-                    required
-                  />
+                    <input
+                      type="text"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-black/40 border-2 border-white/5 focus:border-primary/50 outline-none font-bold text-white transition-all shadow-inner"
+                      placeholder="Ej. juanito"
+                      required
+                    />
                 </div>
                 <div>
                   <label className="text-sm font-bold opacity-80 mb-1 block">Contraseña</label>
-                  <input
-                    type="text"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none"
-                    placeholder="Ej. 1234"
-                    required
-                  />
+                    <input
+                      type="text"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-black/40 border-2 border-white/5 focus:border-primary/50 outline-none font-bold text-white transition-all shadow-inner"
+                      placeholder="Ej. 1234"
+                      required
+                    />
                 </div>
                 {role === 'admin' && (
                   <div>
@@ -346,13 +346,13 @@ export default function AdminDashboard() {
                   <table className="w-full">
                     <thead className="bg-black/5 dark:bg-white/5">
                       <tr>
-                        <th className="px-6 py-4 text-left font-bold opacity-70">Nombre</th>
-                        <th className="px-6 py-4 text-left font-bold opacity-70">Usuario</th>
-                        <th className="px-6 py-4 text-left font-bold opacity-70">Contraseña</th>
-                        {role === 'admin' && <th className="px-6 py-4 text-left font-bold opacity-70">Rol</th>}
-                        <th className="px-6 py-4 text-center font-bold opacity-70">Sesiones Jugadas</th>
-                        <th className="px-6 py-4 text-center font-bold opacity-70">Estado</th>
-                        <th className="px-6 py-4 text-center font-bold opacity-70">Acciones</th>
+                        <th className="px-6 py-4 text-left font-bold text-primary">Nombre</th>
+                        <th className="px-6 py-4 text-left font-bold text-primary">Usuario</th>
+                        <th className="px-6 py-4 text-left font-bold text-primary">Contraseña</th>
+                        {role === 'admin' && <th className="px-6 py-4 text-left font-bold text-primary">Rol</th>}
+                        <th className="px-6 py-4 text-center font-bold text-primary">Sesiones</th>
+                        <th className="px-6 py-4 text-center font-bold text-primary">Estado</th>
+                        <th className="px-6 py-4 text-center font-bold text-primary">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/5 dark:divide-white/5">
@@ -441,7 +441,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Leaderboard Section */}
-        <div className="mt-8 bg-white/50 dark:bg-black/30 p-6 md:p-8 rounded-3xl shadow-inner border border-white/20">
+        <div className="mt-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h3 className="text-2xl font-bold flex items-center gap-3">
               <Trophy className="w-8 h-8 text-yellow-500" />
@@ -480,10 +480,10 @@ export default function AdminDashboard() {
               <table className="w-full text-left">
                 <thead className="bg-black/5 dark:bg-white/5">
                   <tr>
-                    <th className="px-6 py-4 font-bold opacity-70 w-24 text-center">Rango</th>
-                    <th className="px-6 py-4 font-bold opacity-70">Estudiante</th>
-                    <th className="px-6 py-4 font-bold opacity-70 text-center">Porcentaje de Éxito</th>
-                    <th className="px-6 py-4 font-bold opacity-70 text-center">Tiempo Récord</th>
+                    <th className="px-6 py-4 font-bold text-secondary w-24 text-center">Rango</th>
+                    <th className="px-6 py-4 font-bold text-secondary">Estudiante</th>
+                    <th className="px-6 py-4 font-bold text-secondary text-center">Éxito</th>
+                    <th className="px-6 py-4 font-bold text-secondary text-center">Récord</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-black/5 dark:divide-white/5">
@@ -523,7 +523,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* ── Clean Practice Records Section ──────────────────────────────── */}
-        <div className="mt-8 bg-white/50 dark:bg-black/30 p-6 md:p-8 rounded-3xl shadow-inner border border-white/20">
+        <div className="mt-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center">
               <Trash2 className="w-5 h-5 text-red-500" />
