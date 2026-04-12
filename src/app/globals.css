@@ -36,18 +36,6 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  background-image: radial-gradient(var(--primary) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: -19px -19px;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--background);
-  opacity: 0.95;
-  z-index: -1;
 }
 
 .title-shadow {
@@ -61,6 +49,4 @@ body::before {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
-body::before {
-  opacity: 0.1; /* Very subtle dot overlay */
-}
+
