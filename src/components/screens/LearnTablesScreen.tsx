@@ -66,6 +66,7 @@ export default function LearnTablesScreen() {
   const [verified, setVerified] = useState(false);
   const [quizOrder, setQuizOrder] = useState<number[]>(MULTIPLIERS);
   const [showHistory, setShowHistory] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   // Records per table
   const [tableRecords, setTableRecords] = useState<PracticeRecord[]>([]);
@@ -138,7 +139,12 @@ export default function LearnTablesScreen() {
   const getCorrectAnswer = (rowIndex: number) => selectedTable * quizOrder[rowIndex];
 
   const handleAnswerChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
+    if (value !== '' && !/^\d+$/.test(value)) {
+      setShowWarning(true);
+      setTimeout(() => setShowWarning(false), 2000);
+      return;
+    }
+    setShowWarning(false);
     const next = [...answers];
     next[index] = value;
     setAnswers(next);
@@ -428,11 +434,17 @@ export default function LearnTablesScreen() {
                     {selectedTable} × {m} =
                   </span>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     value={answers[i]}
                     onChange={e => handleAnswerChange(i, e.target.value)}
                     disabled={isCorrectRow}
-                    onKeyDown={e => { if (e.key === 'Enter') verify(); }}
+                    onKeyDown={e => { 
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Optional: move focus to next input instead of verifying
+                      }
+                    }}
                     className={`w-24 text-center font-display font-bold text-3xl py-2 rounded-xl border-4 outline-none transition-all ${
                       isCorrectRow
                         ? 'bg-green-500/20 border-green-400 text-green-300'
@@ -456,6 +468,19 @@ export default function LearnTablesScreen() {
               );
             })}
           </div>
+
+          <AnimatePresence>
+            {showWarning && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-4 p-3 bg-red-400/20 border border-red-400/30 rounded-xl text-red-300 text-center font-bold text-sm"
+              >
+                ⚠️ Solo debes seleccionar números
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <motion.button
             whileHover={{ scale: 1.02 }}

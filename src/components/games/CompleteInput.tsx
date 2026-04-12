@@ -10,6 +10,7 @@ export default function CompleteInput() {
   const { currentQuestion, currentIndex, questions, handleAnswer } = useGameLogic('INPUT');
   const [inputValue, setInputValue] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [showWarning, setShowWarning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -24,6 +25,10 @@ export default function CompleteInput() {
     e.preventDefault();
     if (!inputValue.trim() || feedback) return;
     
+    // User wants to avoid accidental Enter, but this is the form submit.
+    // If they want to remove it entirely, we could just handle click on the button.
+    // However, keeping standard form behavior but with guard.
+    
     const numValue = parseInt(inputValue, 10);
     const isCorrect = numValue === currentQuestion?.correctAnswer;
     setFeedback(isCorrect ? 'correct' : 'incorrect');
@@ -31,6 +36,16 @@ export default function CompleteInput() {
     setTimeout(() => {
       handleAnswer(numValue, isCorrect);
     }, 1500);
+  };
+
+  const handleInputChange = (value: string) => {
+    if (value !== '' && !/^\d+$/.test(value)) {
+      setShowWarning(true);
+      setTimeout(() => setShowWarning(false), 2000);
+      return;
+    }
+    setShowWarning(false);
+    setInputValue(value);
   };
 
   if (!currentQuestion) return null;
@@ -53,10 +68,18 @@ export default function CompleteInput() {
                 <span className="text-primary">=</span>
                 <input
                   ref={inputRef}
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={(e) => handleInputChange(e.target.value)}
                   disabled={feedback !== null}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      // Block enter to avoid "finishing activity" accidentally
+                      e.preventDefault();
+                      // Only submit if user explicitly uses the button or we decide to keep ENTER for submission
+                    }
+                  }}
                   className="w-32 md:w-48 text-center bg-black/60 border-b-8 border-secondary focus:border-primary focus:outline-none rounded-2xl shadow-inner text-white font-bold py-4 text-5xl md:text-7xl placeholder:text-white/20"
                   autoFocus
                 />
@@ -79,6 +102,19 @@ export default function CompleteInput() {
                       {feedback === 'correct' ? '¡Correcto!' : '¡Incorrecto!'}
                     </span>
                   </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {showWarning && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute -top-10 inset-x-0 p-2 bg-red-400/20 border border-red-400/30 rounded-xl text-red-300 text-center font-bold text-xs"
+                >
+                  ⚠️ Solo debes colocar números
                 </motion.div>
               )}
             </AnimatePresence>

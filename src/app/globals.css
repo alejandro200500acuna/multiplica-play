@@ -26,6 +26,17 @@
   --error: #fb7185;
 }
 
+/* Hide number input spinners */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /* Light mode overrides - mostly ignored but kept for compatibility */
 .light-theme {
   --background: #fdf8f5;
