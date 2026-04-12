@@ -19,9 +19,11 @@ interface GameState {
   isNewRecord: boolean;
   competitionRoomId: string | null;
   competitionIsPlayer1: boolean;
+  schoolName: string | null;
+  grade: string | null;
   
   setStep: (step: Step) => void;
-  setUser: (name: string, id: string, role: string) => void;
+  setUser: (name: string, id: string, role: string, schoolName?: string, grade?: string) => void;
   setTables: (tables: number[]) => void;
   setGame: (game: GameType) => void;
   setResults: (correct: number, wrong: number, percentage: number, passed: boolean, timeTaken?: number, isNewRecord?: boolean) => void;
@@ -47,9 +49,12 @@ export const useStore = create<GameState>()(
       isNewRecord: false,
       competitionRoomId: null,
       competitionIsPlayer1: true,
+      schoolName: null,
+      grade: null,
       
       setStep: (step) => set({ currentStep: step }),
-      setUser: (name, id, role) => set({ studentName: name, studentId: id, role: role as any }),
+      setUser: (name, id, role, schoolName = null, grade = null) => 
+        set({ studentName: name, studentId: id, role: role as any, schoolName, grade }),
       setTables: (tables) => set({ selectedTables: tables }),
       setGame: (game) => set({ currentGame: game }),
       setResults: (correct, wrong, percentage, passed, timeTaken = 0, isNewRecord = false) => 

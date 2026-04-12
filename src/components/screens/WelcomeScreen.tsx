@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogIn, User, Lock, AlertCircle } from 'lucide-react';
+import { LogIn, User, Lock, AlertCircle, School, GraduationCap, DoorOpen } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { supabase } from '@/lib/supabase';
+import { useEffect } from 'react';
 
 export default function WelcomeScreen() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -23,7 +24,40 @@ export default function WelcomeScreen() {
   const [regError, setRegError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
 
+  // New fields for schools and classrooms
+  const [schools, setSchools] = useState<any[]>([]);
+  const [availableClassrooms, setAvailableClassrooms] = useState<any[]>([]);
+  const [regSchoolId, setRegSchoolId] = useState('');
+  const [regGrade, setRegGrade] = useState('');
+  const [regRoomId, setRegRoomId] = useState('');
+
   const { setUser, setStep } = useStore();
+
+  useEffect(() => {
+    const loadSchoolsData = async () => {
+      const { data } = await supabase.from('schools').select('*').order('name');
+      setSchools(data || []);
+    };
+    loadSchoolsData();
+  }, []);
+
+  useEffect(() => {
+    if (regSchoolId && regGrade) {
+      const loadRooms = async () => {
+        const { data } = await supabase
+          .from('classrooms')
+          .select('*')
+          .eq('school_id', regSchoolId)
+          .eq('grade', regGrade)
+          .order('room_number');
+        setAvailableClassrooms(data || []);
+      };
+      loadRooms();
+    } else {
+      setAvailableClassrooms([]);
+      setRegRoomId('');
+    }
+  }, [regSchoolId, regGrade]);
 
   const handleStart = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,17 +66,27 @@ export default function WelcomeScreen() {
     setErrorMsg('');
     try {
       const { data, error } = await supabase
-        .from('users').select('*')
+        .from('users')
+        .select(`
+          *,
+          schools(name),
+          classrooms(grade)
+        `)
         .eq('username', username.trim())
         .eq('password', password)
         .single();
+
       if (error || !data) {
         setErrorMsg('Usuario o contraseña incorrectos');
         setIsLoading(false);
         return;
       }
       await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', data.id);
-      setUser(data.full_name, data.id, data.role);
+      
+      const sName = (data.schools as any)?.name || null;
+      const grade = (data.classrooms as any)?.grade?.toString() || null;
+      
+      setUser(data.full_name, data.id, data.role, sName, grade);
       if (data.role === 'admin' || data.role === 'profesor') {
         setStep('ADMIN_DASHBOARD');
       } else {
@@ -78,7 +122,9 @@ export default function WelcomeScreen() {
         username: regUsername.trim().toLowerCase(),
         password: regPassword.trim(),
         role: 'student',
-        last_login: new Date().toISOString()
+        last_login: new Date().toISOString(),
+        school_id: regSchoolId || null,
+        classroom_id: regRoomId || null
       }]).select().single();
 
       if (error) {
@@ -90,7 +136,22 @@ export default function WelcomeScreen() {
         setIsRegistering(false);
         return;
       }
-      setUser(data.full_name, data.id, data.role);
+
+      // Fetch newly created user with joined data
+      const { data: userData } = await supabase
+        .from('users')
+        .select('*, schools(name), classrooms(grade)')
+        .eq('id', data.id)
+        .single();
+
+      if (userData) {
+        const sName = (userData.schools as any)?.name || null;
+        const grade = (userData.classrooms as any)?.grade?.toString() || null;
+        setUser(userData.full_name, userData.id, userData.role, sName, grade);
+      } else {
+        setUser(data.full_name, data.id, data.role);
+      }
+      
       setStep('MODE_SELECT');
     } catch (err) {
       setRegError('Error inesperado. Intenta de nuevo.');
@@ -289,6 +350,67 @@ export default function WelcomeScreen() {
                     </div>
                   </div>
                 </div>
+
+                {/* School Selection */}
+                <div className="flex flex-col gap-2 text-left">
+                  <label className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Escuela</label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><School className="w-5 h-5" /></div>
+                    <select
+                      value={regSchoolId}
+                      onChange={(e) => { setRegSchoolId(e.target.value); setRegGrade(''); setRegRoomId(''); }}
+                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner appearance-none"
+                      required
+                      disabled={isRegistering}
+                    >
+                      <option value="">-- Elige tu Escuela --</option>
+                      {schools.map(s => <option key={s.id} value={s.id} className="bg-gray-800">{s.name}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Grade and Room Selection */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2 text-left">
+                    <label className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Grado</label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><GraduationCap className="w-5 h-5" /></div>
+                      <select
+                        value={regGrade}
+                        onChange={(e) => { setRegGrade(e.target.value); setRegRoomId(''); }}
+                        className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner appearance-none disabled:opacity-40"
+                        required
+                        disabled={isRegistering || !regSchoolId}
+                      >
+                        <option value="">-- Grado --</option>
+                        {['1', '2', '3', '4', '5', '6'].map(g => <option key={g} value={g} className="bg-gray-800">{g}° Grado</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2 text-left">
+                    <label className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Aula</label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><DoorOpen className="w-5 h-5" /></div>
+                      <select
+                        value={regRoomId}
+                        onChange={(e) => setRegRoomId(e.target.value)}
+                        className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner appearance-none disabled:opacity-40"
+                        required
+                        disabled={isRegistering || !regGrade || availableClassrooms.length === 0}
+                      >
+                        <option value="">-- Aula --</option>
+                        {availableClassrooms.map(r => (
+                          <option key={r.id} value={r.id} className="bg-gray-800">Aula {r.room_number}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {availableClassrooms.length === 0 && regGrade && regSchoolId && (
+                  <p className="text-xs text-amber-400 font-bold ml-2 italic">Aún no hay aulas creadas para este grado.</p>
+                )}
 
                 <AnimatePresence>
                   {regError && (

@@ -170,21 +170,12 @@ export default function LearnTablesScreen() {
     setVerified(true);
 
     const correctCount = newResults.filter(r => r === 'correct').length;
+    saveRecord(correctCount);
 
-    if (newResults.every(r => r === 'correct')) {
+    // Always finalize the activity regardless of mistakes
+    setTimeout(() => {
       setIsComplete(true);
-      saveRecord(correctCount);
-    } else {
-      // Save partial attempt record
-      saveRecord(correctCount);
-      setTimeout(() => {
-        const retryAnswers = answers.map((ans, i) =>
-          newResults[i] === 'correct' ? ans : ''
-        );
-        setAnswers(retryAnswers);
-        setVerified(false);
-      }, 1800);
-    }
+    }, 1500);
   };
 
   const goNextTable = () => {
@@ -497,19 +488,25 @@ export default function LearnTablesScreen() {
             transition={{ duration: 0.8 }}
             className="text-8xl mb-4"
           >
-            🏆
+            {correctCount === 10 ? '🏆' : correctCount >= 7 ? '⭐' : '📝'}
           </motion.div>
           <h3 className="text-3xl font-display font-bold mb-2">
-            ¡Tabla del {selectedTable} dominada!
+            {correctCount === 10 ? `¡Tabla del ${selectedTable} dominada!` : `Tabla del ${selectedTable}: ${correctCount}/10`}
           </h3>
           <p className="text-foreground/70 font-medium mb-2">
-            ¡Todas las respuestas correctas! 🎉
+            {correctCount === 10 
+              ? '¡Todas las respuestas correctas! 🎉' 
+              : correctCount >= 7 
+                ? '¡Muy bien! Sigue practicando para logar el 100% 💪'
+                : 'Sigue practicando, ¡tú puedes mejorar! 🚀'}
           </p>
           {isSaving && (
             <p className="text-sm text-foreground/50 mb-2">Guardando registro…</p>
           )}
           <div className="flex gap-2 justify-center mb-6 text-2xl">
-            {Array(10).fill('😊').join(' ')}
+            {results.map((r, i) => (
+              <span key={i}>{r === 'correct' ? '😊' : '😢'}</span>
+            ))}
           </div>
 
           {/* Show last few records */}

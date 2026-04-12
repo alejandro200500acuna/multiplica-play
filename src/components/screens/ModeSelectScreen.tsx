@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, Swords, LogOut, GraduationCap } from 'lucide-react';
+import { BookOpen, Swords, LogOut, GraduationCap, School } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 
 export default function ModeSelectScreen() {
-  const { studentName, setStep, resetAll } = useStore();
+  const { studentName, schoolName, grade, setStep, resetAll } = useStore();
 
   return (
     <motion.div
@@ -24,10 +24,30 @@ export default function ModeSelectScreen() {
         </button>
 
         <span className="text-5xl mb-4 block">🎮</span>
-        <h2 className="text-3xl md:text-4xl font-display font-bold text-white title-shadow uppercase tracking-wide mb-2">
+        <h2 className="text-3xl md:text-4xl font-display font-bold text-white title-shadow uppercase tracking-wide mb-1">
           ¡Hola, {studentName}!
         </h2>
-        <p className="text-foreground/70 font-medium text-lg">¿Cómo quieres jugar hoy?</p>
+
+        {(schoolName || grade) && (
+          <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 mb-4 text-sm font-bold uppercase tracking-widest text-secondary opacity-90">
+            {schoolName && (
+              <div className="flex items-center gap-2">
+                <School className="w-4 h-4" />
+                <span>{schoolName}</span>
+              </div>
+            )}
+            {grade && (
+              <div className="flex items-center gap-2">
+                <GraduationCap className="w-4 h-4" />
+                <span>{grade}° Grado</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto mb-4"></div>
+
+        <p className="text-foreground/70 font-medium text-lg italic opacity-80">¿Cómo quieres jugar hoy?</p>
       </div>
 
       {/* Mode buttons */}
