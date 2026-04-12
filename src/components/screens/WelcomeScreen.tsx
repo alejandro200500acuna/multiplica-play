@@ -302,7 +302,7 @@ export default function WelcomeScreen() {
             <motion.div key="register" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
               <p className="text-foreground/70 text-sm mb-5">Crea tu cuenta gratis en segundos.<br />No necesitas activarla, ¡accede de inmediato!</p>
 
-              <form onSubmit={handleRegister} className="flex flex-col gap-4">
+              <form onSubmit={handleRegister} className="flex flex-col gap-4" autoComplete="off">
                 <div className="flex flex-col gap-2 text-left">
                   <label htmlFor="reg-fullname" className="font-bold text-foreground ml-2">Nombre Completo</label>
                   <div className="relative">
@@ -311,6 +311,7 @@ export default function WelcomeScreen() {
                       id="reg-fullname" type="text" value={regFullname}
                       onChange={(e) => setRegFullname(e.target.value)}
                       placeholder="Ej. Juan Pérez García"
+                      autoComplete="off"
                       className="w-full pl-12 pr-6 py-3 rounded-2xl border-4 border-accent/20 focus:border-accent focus:outline-none bg-white/80 dark:bg-black/20 text-lg font-bold transition-all shadow-inner"
                       required disabled={isRegistering}
                     />
@@ -325,6 +326,8 @@ export default function WelcomeScreen() {
                       id="reg-username" type="text" value={regUsername}
                       onChange={(e) => setRegUsername(e.target.value.replace(/\s/g, ''))}
                       placeholder={regFullname.trim() ? regFullname.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'.') : 'Ej. juan.perez'}
+                      autoComplete="off"
+                      name="reg-username-field"
                       className="w-full pl-12 pr-6 py-3 rounded-2xl border-4 border-accent/20 focus:border-accent focus:outline-none bg-white/80 dark:bg-black/20 text-lg font-bold transition-all shadow-inner"
                       required disabled={isRegistering}
                     />
