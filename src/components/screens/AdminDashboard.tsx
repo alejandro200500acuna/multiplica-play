@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { supabase } from '@/lib/supabase';
-import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw, Trophy, Clock, Trash2, BookOpen, AlertTriangle, X, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { UserPlus, Users, LogOut, Loader2, Play, RefreshCw, Trophy, Clock, Trash2, BookOpen, AlertTriangle, X, Check, KeyRound, UserX } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AdminDashboard() {
   const { resetAll, role } = useStore();
@@ -32,6 +32,16 @@ export default function AdminDashboard() {
   const [showCleanConfirm, setShowCleanConfirm] = useState(false);
   const [studentRecordCounts, setStudentRecordCounts] = useState<Record<number, number>>({});
   const [isLoadingCounts, setIsLoadingCounts] = useState(false);
+
+  // Change password modal
+  const [pwTarget, setPwTarget] = useState<{ id: string; name: string } | null>(null);
+  const [newPw, setNewPw] = useState('');
+  const [isChangingPw, setIsChangingPw] = useState(false);
+  const [pwMsg, setPwMsg] = useState('');
+
+  // Delete user modal
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchStudents = async () => {
     setIsLoading(true);
@@ -135,6 +145,38 @@ export default function AdminDashboard() {
     fetchLeaderboard();
   }, [selectedGame]);
 
+  const handleChangePassword = async () => {
+    if (!pwTarget || !newPw.trim()) return;
+    setIsChangingPw(true);
+    setPwMsg('');
+    const { error } = await supabase
+      .from('users')
+      .update({ password: newPw.trim() })
+      .eq('id', pwTarget.id);
+    if (error) {
+      setPwMsg('❌ Error al cambiar la contraseña.');
+    } else {
+      setPwMsg('✅ Contraseña actualizada correctamente.');
+      fetchStudents();
+      setTimeout(() => { setPwTarget(null); setPwMsg(''); setNewPw(''); }, 1500);
+    }
+    setIsChangingPw(false);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', deleteTarget.id);
+    if (!error) {
+      fetchStudents();
+    }
+    setIsDeleting(false);
+    setDeleteTarget(null);
+  };
+
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newFullname || !newUsername || !newPassword) return;
@@ -171,6 +213,7 @@ export default function AdminDashboard() {
   };
 
   return (
+    <>
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -309,6 +352,7 @@ export default function AdminDashboard() {
                         {role === 'admin' && <th className="px-6 py-4 text-left font-bold opacity-70">Rol</th>}
                         <th className="px-6 py-4 text-center font-bold opacity-70">Sesiones Jugadas</th>
                         <th className="px-6 py-4 text-center font-bold opacity-70">Estado</th>
+                        <th className="px-6 py-4 text-center font-bold opacity-70">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/5 dark:divide-white/5">
@@ -360,11 +404,30 @@ export default function AdminDashboard() {
                               </span>
                             </div>
                           </td>
+                          {/* Acciones */}
+                          <td className="px-4 py-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => { setPwTarget({ id: st.id, name: st.full_name }); setNewPw(st.password); setPwMsg(''); }}
+                                title="Cambiar contraseña"
+                                className="p-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/30 text-blue-400 transition-colors"
+                              >
+                                <KeyRound className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteTarget({ id: st.id, name: st.full_name })}
+                                title="Eliminar usuario"
+                                className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/30 text-red-400 transition-colors"
+                              >
+                                <UserX className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                       {students.length === 0 && (
                         <tr>
-                          <td colSpan={6} className="px-6 py-8 text-center opacity-60 italic">
+                          <td colSpan={7} className="px-6 py-8 text-center opacity-60 italic">
                             No hay estudiantes registrados. Crea el primero a la izquierda.
                           </td>
                         </tr>
@@ -582,5 +645,108 @@ export default function AdminDashboard() {
         </div>
       </div>
     </motion.div>
+
+    {/* ── Change Password Modal ───────────────────────────────────────────── */}
+    <AnimatePresence>
+      {pwTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="bg-white dark:bg-gray-900 rounded-3xl p-8 max-w-sm w-full shadow-2xl border-t-4 border-t-blue-500"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
+                <KeyRound className="w-8 h-8 text-blue-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-1 text-foreground">Cambiar Contraseña</h3>
+              <p className="text-foreground/60 text-sm mb-6">
+                Usuario: <strong>{pwTarget.name}</strong>
+              </p>
+
+              <input
+                type="text"
+                value={newPw}
+                onChange={e => setNewPw(e.target.value)}
+                placeholder="Nueva contraseña"
+                className="w-full px-4 py-3 rounded-xl border-2 border-blue-300 focus:border-blue-500 outline-none bg-white dark:bg-black/50 text-foreground font-mono text-lg text-center mb-4"
+                autoFocus
+              />
+
+              {pwMsg && (
+                <p className={`text-sm font-bold mb-4 ${pwMsg.includes('✅') ? 'text-green-600' : 'text-red-500'}`}>
+                  {pwMsg}
+                </p>
+              )}
+
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => { setPwTarget(null); setNewPw(''); setPwMsg(''); }}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <X className="w-4 h-4" /> Cancelar
+                </button>
+                <button
+                  onClick={handleChangePassword}
+                  disabled={isChangingPw || !newPw.trim()}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-blue-500 hover:bg-blue-600 text-white shadow-[0_4px_0_#1d4ed8] hover:translate-y-[2px] hover:shadow-[0_2px_0_#1d4ed8] transition-all disabled:opacity-50"
+                >
+                  {isChangingPw ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                  {isChangingPw ? 'Guardando…' : 'Guardar'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+
+    {/* ── Delete User Modal ───────────────────────────────────────────────── */}
+    <AnimatePresence>
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="bg-white dark:bg-gray-900 rounded-3xl p-8 max-w-sm w-full shadow-2xl border-t-4 border-t-red-500"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-foreground">¿Eliminar usuario?</h3>
+              <p className="text-foreground/70 mb-1 font-medium">
+                Estás a punto de eliminar a:
+              </p>
+              <p className="text-lg font-display font-bold text-red-500 mb-2">{deleteTarget.name}</p>
+              <p className="text-sm text-foreground/50 mb-8">
+                Se eliminarán también todas sus sesiones de práctica y registros. <strong>Esta acción no se puede deshacer.</strong>
+              </p>
+
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={isDeleting}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <X className="w-4 h-4" /> Cancelar
+                </button>
+                <button
+                  onClick={handleDeleteUser}
+                  disabled={isDeleting}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-red-500 hover:bg-red-600 text-white shadow-[0_4px_0_#991b1b] hover:translate-y-[2px] hover:shadow-[0_2px_0_#991b1b] transition-all disabled:opacity-50"
+                >
+                  {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserX className="w-4 h-4" />}
+                  {isDeleting ? 'Eliminando…' : 'Sí, eliminar'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
