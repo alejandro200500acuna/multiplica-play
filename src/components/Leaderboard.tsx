@@ -61,22 +61,22 @@ export default function Leaderboard({ compact = false }: { compact?: boolean }) 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
-      className="glass-panel p-6 md:p-8 rounded-3xl shadow-2xl border-t-4 border-t-yellow-400 w-full"
+      className="glass-panel p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 bg-white w-full text-slate-800"
     >
       <div className="flex flex-col sm:flex-row items-center justify-between mb-5 gap-3">
-        <h3 className="text-xl font-display font-bold flex items-center gap-2">
-          <Trophy className="w-6 h-6 text-yellow-400" />
+        <h3 className="text-xl font-display font-bold text-slate-900 flex items-center gap-2">
+          <Trophy className="w-6 h-6 text-amber-500" />
           Salón de la Fama
         </h3>
-        <div className="flex bg-black/10 dark:bg-white/10 p-1 rounded-xl">
+        <div className="flex bg-slate-100 p-1 rounded-xl">
           {GAMES.map(g => (
             <button
               key={g.id}
               onClick={() => setSelectedGame(g.id)}
               className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors whitespace-nowrap ${
                 selectedGame === g.id
-                  ? 'bg-white dark:bg-black/50 text-yellow-600 shadow-sm'
-                  : 'opacity-60 hover:opacity-100'
+                  ? 'bg-white text-indigo-600 shadow-sm font-extrabold'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               {g.label}
@@ -88,12 +88,12 @@ export default function Leaderboard({ compact = false }: { compact?: boolean }) 
       <div className="relative min-h-[160px]">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
           </div>
         )}
 
         {!isLoading && leaderboard.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-32 opacity-50 gap-2">
+          <div className="flex flex-col items-center justify-center h-32 text-slate-400 gap-2">
             <Trophy className="w-10 h-10" />
             <p className="font-medium text-sm text-center">Aún no hay campeones.<br/>¡Sé el primero!</p>
           </div>
@@ -103,15 +103,15 @@ export default function Leaderboard({ compact = false }: { compact?: boolean }) 
           <div
             key={i}
             className={`flex items-center gap-3 mb-3 p-3 rounded-2xl transition-colors ${
-              i === 0 ? 'bg-yellow-400/10 border border-yellow-400/30' : 'bg-black/5 dark:bg-white/5'
+              i === 0 ? 'bg-amber-50 border border-amber-200' : 'bg-slate-50 border border-slate-100'
             }`}
           >
-            <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full border-2 font-bold text-sm flex-shrink-0 ${MEDALS[i] ?? 'bg-black/10 dark:bg-white/10 text-foreground border-transparent'}`}>
+            <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full border-2 font-bold text-sm flex-shrink-0 ${MEDALS[i] ?? 'bg-slate-200 text-slate-700 border-transparent'}`}>
               {i + 1}
             </span>
-            <span className="font-bold flex-1 truncate">{student.full_name}</span>
-            <span className="text-green-600 dark:text-green-400 font-bold text-sm">{student.score_percentage}%</span>
-            <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-mono text-xs bg-blue-500/10 px-2 py-1 rounded-full">
+            <span className="font-bold flex-1 truncate text-slate-800">{student.full_name}</span>
+            <span className="text-emerald-600 font-bold text-sm">{student.score_percentage}%</span>
+            <span className="flex items-center gap-1 text-indigo-600 font-mono text-xs bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100">
               <Clock className="w-3 h-3" /> {fmtTime(student.duration_seconds)}
             </span>
           </div>

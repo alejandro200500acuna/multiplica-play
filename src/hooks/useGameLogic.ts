@@ -21,9 +21,12 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
   const [startTime, setStartTime] = useState<number>(0);
 
   useEffect(() => {
+    // Fallback to all tables 2..10 if no table selected
+    const tablesToUse = selectedTables.length > 0 ? selectedTables : [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
     // Generate questions
     const allCombinations: {num1: number, num2: number}[] = [];
-    selectedTables.forEach(table => {
+    tablesToUse.forEach(table => {
       // 1 to 10 as requested
       for (let i = 1; i <= 10; i++) {
         allCombinations.push({ num1: table, num2: i });
@@ -50,7 +53,7 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
         const optionSet = new Set<number>();
         optionSet.add(correctAnswer);
         while(optionSet.size < 4) {
-          const fakeNum1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
+          const fakeNum1 = tablesToUse[Math.floor(Math.random() * tablesToUse.length)];
           const fakeNum2 = Math.floor(Math.random() * 10) + 1; // 1 to 10
           const fakeAnswer = fakeNum1 * fakeNum2;
           // Add some randomness if needed just to fill options
@@ -76,7 +79,7 @@ export function useGameLogic(gameType: string, totalQuestions: number = 10) {
     
     setQuestions(newQuestions);
     setStartTime(Date.now());
-  }, []);
+  }, [selectedTables, gameType, totalQuestions]);
 
   const handleAnswer = (userAnswer: number, isCorrect: boolean) => {
     if (isCorrect) {

@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${nunito.variable} ${fredoka.variable} antialiased min-h-screen flex flex-col relative`}>
+      <body className={`${nunito.variable} ${fredoka.variable} antialiased min-h-screen flex flex-col relative bg-[#3b59c8] overflow-x-hidden`}>
         <AnimatedBackground />
         <div className="relative z-10 flex-1 flex flex-col">
           {children}

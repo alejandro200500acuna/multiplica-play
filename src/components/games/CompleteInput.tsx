@@ -60,12 +60,12 @@ export default function CompleteInput() {
                 key={currentQuestion.id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-center gap-4 text-6xl md:text-8xl font-display font-bold mb-16 title-shadow text-black dark:text-white"
+                className="flex items-center justify-center gap-4 text-6xl md:text-7xl font-display font-bold mb-16 text-slate-900"
               >
                 <span>{currentQuestion.num1}</span>
-                <span className="text-secondary">×</span>
+                <span className="text-amber-500">×</span>
                 <span>{currentQuestion.num2}</span>
-                <span className="text-primary">=</span>
+                <span className="text-indigo-600">=</span>
                 <input
                   ref={inputRef}
                   type="text"
@@ -75,12 +75,10 @@ export default function CompleteInput() {
                   disabled={feedback !== null}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      // Block enter to avoid "finishing activity" accidentally
                       e.preventDefault();
-                      // Only submit if user explicitly uses the button or we decide to keep ENTER for submission
                     }
                   }}
-                  className="w-32 md:w-48 text-center bg-black/60 border-b-8 border-secondary focus:border-primary focus:outline-none rounded-2xl shadow-inner text-white font-bold py-4 text-5xl md:text-7xl placeholder:text-white/20"
+                  className="w-32 md:w-48 text-center bg-slate-50 border-2 border-indigo-200 focus:border-indigo-600 focus:bg-white focus:outline-none rounded-2xl shadow-sm text-indigo-950 font-extrabold py-3 text-4xl md:text-6xl placeholder:text-slate-300"
                   autoFocus
                 />
               </motion.div>

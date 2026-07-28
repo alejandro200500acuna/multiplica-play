@@ -119,15 +119,15 @@ export default function GamesScreen() {
           <div className="flex items-center justify-center mb-10 relative">
             <button 
               onClick={() => setStep('TABLES')}
-              className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors absolute left-0 top-1/2 -translate-y-1/2"
+              className="p-2 rounded-full hover:bg-slate-100 transition-colors absolute left-0 top-1/2 -translate-y-1/2 text-slate-700"
             >
               <ChevronLeft className="w-8 h-8" />
             </button>
             <div className="flex flex-col items-center">
-              <span className="text-primary-dark dark:text-primary-100 bg-primary/20 px-4 py-1.5 rounded-full text-lg font-bold mb-2 inline-block">
-                ¡Bienvenido/a, {studentName}! ✨
+              <span className="bg-indigo-50 border border-indigo-200 text-indigo-900 px-4 py-1.5 rounded-full text-sm font-bold mb-2 inline-block shadow-sm">
+                ¡Bienvenido/a, {studentName || 'Estudiante'}! ✨
               </span>
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-center title-shadow text-white">
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-center text-slate-900">
                 Elige un desafío 🎮
               </h2>
             </div>
@@ -144,16 +144,15 @@ export default function GamesScreen() {
                 <button
                   onClick={() => handleSelectGame(game.id)}
                   className={cn(
-                    "w-full p-6 rounded-3xl flex flex-col items-center justify-center gap-4 transition-all duration-300 relative overflow-hidden group",
+                    "w-full p-6 rounded-3xl flex flex-col items-center justify-center gap-4 transition-all duration-300 relative overflow-hidden group shadow-md",
                     game.color,
-                    game.shadow,
-                    "hover:translate-y-[4px]"
+                    "hover:translate-y-[-2px]"
                   )}
                 >
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
                   <game.icon className="w-16 h-16 group-hover:scale-110 transition-transform" />
                   <div>
-                    <h3 className="font-display font-bold text-2xl mb-2">{game.name}</h3>
+                    <h3 className="font-display font-bold text-2xl mb-2 text-white">{game.name}</h3>
                     <p className="text-white/90 font-medium">{game.description}</p>
                   </div>
                 </button>
@@ -167,32 +166,29 @@ export default function GamesScreen() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-panel p-6 md:p-8 rounded-3xl w-full lg:w-80 shadow-2xl border-t-4 border-t-yellow-400 flex flex-col"
+          className="glass-panel p-6 md:p-8 rounded-3xl w-full lg:w-80 shadow-xl border border-slate-200 bg-white flex flex-col"
         >
           <div className="flex flex-col items-center mb-6">
-            <Trophy className="w-16 h-16 text-yellow-400 mb-2 drop-shadow-md" />
-            <h3 className="text-2xl font-display font-bold text-center text-foreground">
+            <Trophy className="w-14 h-14 text-amber-500 mb-2 drop-shadow" />
+            <h3 className="text-2xl font-display font-bold text-center text-slate-900">
               Mi Puntuación
             </h3>
-            <p className="text-sm font-medium opacity-70">Mejor puntaje por juego</p>
+            <p className="text-xs font-semibold text-slate-500">Mejor puntaje por juego</p>
           </div>
 
           <div className="flex flex-col gap-4 mb-6">
             {GAMES.map((game) => (
-              <div key={`score-${game.id}`} className="bg-white/60 dark:bg-black/20 p-4 rounded-2xl flex items-center justify-between border-2 border-transparent hover:border-yellow-400/50 transition-colors">
+              <div key={`score-${game.id}`} className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-center justify-between hover:border-amber-400 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", game.color)}>
+                  <div className={cn("w-10 h-10 rounded-full flex items-center justify-center text-white", game.color)}>
                     <game.icon className="w-5 h-5" />
                   </div>
-                  <span className="font-bold text-sm leading-tight text-foreground">{game.name}</span>
+                  <span className="font-bold text-xs leading-tight text-slate-800">{game.name}</span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className={`font-display font-bold text-2xl ${scores[game.id!] > 0 ? 'text-success' : 'text-gray-400'}`}>
+                  <span className={`font-display font-bold text-xl ${scores[game.id!] > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
                     {scores[game.id!]}%
                   </span>
-                  {scores[game.id!] === 100 && (
-                    <Medal className="w-4 h-4 text-yellow-500 absolute -mr-6 mt-1" />
-                  )}
                 </div>
               </div>
             ))}

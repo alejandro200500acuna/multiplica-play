@@ -37,25 +37,25 @@ export default function TablesScreen() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-panel p-6 md:p-10 rounded-3xl w-full max-w-2xl mx-auto shadow-2xl border-t-4 border-t-secondary relative z-10"
+        className="glass-panel p-6 md:p-10 rounded-3xl w-full max-w-2xl mx-auto shadow-xl border border-slate-200 bg-white relative z-10 text-slate-800"
       >
         <div className="flex items-center justify-between mb-8">
           <button 
             onClick={handleBack}
-            className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            className="p-2 rounded-full hover:bg-slate-100 transition-colors text-slate-700"
             title="Volver"
           >
             <LogOut className="w-8 h-8 rotate-180" />
           </button>
           <div className="flex-1 flex flex-col items-center">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-center pr-10 title-shadow text-white uppercase tracking-wider">
-              ¡HOLA {studentName}! 👋
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-center pr-10 text-slate-900 uppercase tracking-wider">
+              ¡HOLA {studentName || 'ESTUDIANTE'}! 👋
             </h2>
           </div>
         </div>
 
         <div className="text-center mb-8">
-          <p className="text-xl font-bold bg-secondary/80 text-white dark:bg-secondary/30 inline-block px-6 py-2 rounded-full shadow-md">
+          <p className="text-lg font-bold bg-indigo-50 text-indigo-900 border border-indigo-200 inline-block px-6 py-2 rounded-full shadow-sm">
             ¿Qué tablas quieres practicar hoy?
           </p>
         </div>
@@ -70,15 +70,15 @@ export default function TablesScreen() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => toggleTable(num)}
                 className={cn(
-                  "relative h-20 md:h-24 rounded-2xl font-display font-bold text-3xl flex items-center justify-center transition-all duration-300",
+                  "relative h-20 md:h-24 rounded-2xl font-display font-bold text-3xl flex items-center justify-center transition-all duration-200",
                   isSelected 
-                    ? "bg-secondary text-white shadow-[0_6px_0_var(--color-secondary-dark)] translate-y-[-4px]" 
-                    : "bg-white/80 dark:bg-black/20 text-foreground border-2 border-dashed border-gray-300 hover:border-secondary hover:bg-secondary/10"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 translate-y-[-2px]" 
+                    : "bg-slate-50 text-slate-800 border-2 border-slate-200 hover:border-indigo-400 hover:bg-slate-100"
                 )}
               >
                 {isSelected && (
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                    <span className="text-white text-xs">✓</span>
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center shadow">
+                    <span className="text-white text-xs font-bold">✓</span>
                   </div>
                 )}
                 {num}
@@ -90,7 +90,7 @@ export default function TablesScreen() {
         <button
           onClick={handleContinue}
           disabled={selected.length === 0}
-          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-success to-emerald-600 text-white font-display font-bold text-2xl py-4 rounded-2xl shadow-[0_8px_0_#047857] hover:shadow-[0_4px_0_#047857] hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-[0_8px_0_#047857] disabled:translate-y-0"
+          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-display font-bold text-xl py-4 rounded-2xl shadow-md hover:bg-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Elegir Juego
           <ArrowRight className="w-6 h-6" />

@@ -49,9 +49,9 @@ export default function TrueFalse() {
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
-              className="text-6xl md:text-8xl font-display font-bold mb-16 title-shadow text-black dark:text-white"
+              className="text-6xl md:text-8xl font-display font-bold mb-16 text-slate-900"
             >
-              {currentQuestion.num1} <span className="text-secondary">×</span> {currentQuestion.num2} = <span className="text-primary">{displayedAnswer}</span>
+              {currentQuestion.num1} <span className="text-amber-500">×</span> {currentQuestion.num2} = <span className="text-indigo-600">{displayedAnswer}</span>
             </motion.div>
           )}
         </AnimatePresence>

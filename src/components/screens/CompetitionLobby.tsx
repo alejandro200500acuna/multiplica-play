@@ -410,22 +410,22 @@ export default function CompetitionLobby() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-lg mx-auto flex flex-col gap-5"
+      className="w-full max-w-lg mx-auto flex flex-col gap-5 text-slate-800"
     >
       {/* ── Main lobby card ── */}
-      <div className="glass-panel p-8 md:p-10 rounded-3xl shadow-2xl border-t-4 border-t-accent">
+      <div className="glass-panel p-8 md:p-10 rounded-3xl shadow-xl border border-slate-200 bg-white">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <button onClick={goBack} className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
+          <button onClick={goBack} className="p-2 rounded-full hover:bg-slate-100 transition-colors text-slate-700">
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-accent to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <Users className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg text-white">
+              <Users className="w-7 h-7" />
             </div>
             <div>
-              <h2 className="text-2xl font-display font-bold">Competencia</h2>
-              <p className="text-foreground/60 text-sm">Multijugador en tiempo real ⚡</p>
+              <h2 className="text-2xl font-display font-bold text-slate-900">Competencia</h2>
+              <p className="text-slate-500 text-sm font-medium">Multijugador en tiempo real ⚡</p>
             </div>
           </div>
         </div>
@@ -433,58 +433,58 @@ export default function CompetitionLobby() {
         {/* Mode: Select */}
         {mode === 'select' && (
           <div className="flex flex-col gap-4">
-            <p className="text-center text-foreground/70 font-medium mb-2">¿Qué deseas hacer?</p>
+            <p className="text-center text-slate-600 font-semibold mb-2">¿Qué deseas hacer?</p>
             <button
               onClick={handleCreateRoom}
               disabled={isLoading}
-              className="w-full p-6 rounded-2xl bg-gradient-to-r from-primary to-secondary text-white font-bold text-xl flex items-center justify-center gap-3 shadow-[0_6px_0_var(--color-primary-dark)] hover:shadow-[0_3px_0_var(--color-primary-dark)] hover:translate-y-[3px] transition-all disabled:opacity-60"
+              className="w-full p-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg flex items-center justify-center gap-3 shadow-md shadow-indigo-200 hover:bg-indigo-700 transition-all disabled:opacity-60"
             >
               {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Plus className="w-6 h-6" />}
               Crear una Sala
             </button>
             <button
               onClick={() => { setMode('join'); setError(''); }}
-              className="w-full p-6 rounded-2xl bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30 border-2 border-accent/30 hover:border-accent text-white font-bold text-xl flex items-center justify-center gap-3 transition-all"
+              className="w-full p-5 rounded-2xl bg-slate-100 hover:bg-slate-200 border-2 border-indigo-200 text-slate-800 font-bold text-lg flex items-center justify-center gap-3 transition-all"
             >
-              <LogIn className="w-6 h-6" />
+              <LogIn className="w-6 h-6 text-indigo-600" />
               Unirse a una Sala
             </button>
-            {error && <p className="text-error text-center font-bold text-sm mt-1">{error}</p>}
+            {error && <p className="text-rose-600 text-center font-bold text-sm mt-1">{error}</p>}
           </div>
         )}
 
         {/* Mode: Create - waiting */}
         {mode === 'create' && (
           <div className="flex flex-col items-center gap-6">
-            <p className="text-foreground/70 font-medium text-center">Comparte este código con tu oponente</p>
-            <div className="w-full bg-black/20 dark:bg-white/5 rounded-2xl p-6 flex items-center justify-center gap-4 border-2 border-accent/30">
-              <span className="text-5xl font-display font-bold tracking-widest text-accent">{roomCode}</span>
-              <button onClick={copyCode} className="p-3 rounded-xl bg-accent/20 hover:bg-accent/40 transition-colors">
-                {copied ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5 text-accent" />}
+            <p className="text-slate-600 font-medium text-center">Comparte este código con tu oponente</p>
+            <div className="w-full bg-indigo-50/80 rounded-2xl p-6 flex items-center justify-center gap-4 border-2 border-indigo-200">
+              <span className="text-5xl font-display font-bold tracking-widest text-indigo-600">{roomCode}</span>
+              <button onClick={copyCode} className="p-3 rounded-xl bg-indigo-100 hover:bg-indigo-200 transition-colors">
+                {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5 text-indigo-600" />}
               </button>
             </div>
-            <div className="flex items-center gap-3 bg-yellow-400/10 border border-yellow-400/30 rounded-2xl p-4 w-full">
-              <Loader2 className="w-6 h-6 text-yellow-400 animate-spin flex-shrink-0" />
-              <p className="text-yellow-300 font-medium text-sm">Esperando que tu oponente se una...</p>
+            <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 w-full">
+              <Loader2 className="w-6 h-6 text-amber-600 animate-spin flex-shrink-0" />
+              <p className="text-amber-800 font-bold text-sm">Esperando que tu oponente se una...</p>
             </div>
-            <p className="text-foreground/40 text-xs text-center">Cuando tu amigo ingrese el código, ¡el duelo comenzará automáticamente!</p>
+            <p className="text-slate-400 text-xs text-center">Cuando tu amigo ingrese el código, ¡el duelo comenzará automáticamente!</p>
           </div>
         )}
 
         {/* Mode: Join */}
         {mode === 'join' && (
           <div className="flex flex-col gap-5">
-            <p className="text-foreground/70 font-medium text-center">Ingresa el código de sala de tu amigo</p>
+            <p className="text-slate-600 font-medium text-center">Ingresa el código de sala de tu amigo</p>
             <input
               type="text"
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))}
               placeholder="XXXXXX"
               maxLength={6}
-              className="w-full text-center text-4xl font-display font-bold tracking-widest py-4 rounded-2xl border-4 border-accent/30 focus:border-accent outline-none bg-white/80 dark:bg-black/20 uppercase text-foreground"
+              className="w-full text-center text-4xl font-display font-bold tracking-widest py-4 rounded-2xl border-2 border-indigo-200 focus:border-indigo-600 outline-none bg-slate-50 uppercase text-slate-900"
             />
             {error && (
-              <div className="flex items-center gap-2 text-error bg-error/10 p-3 rounded-xl">
+              <div className="flex items-center gap-2 text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 <span className="font-medium text-sm">{error}</span>
               </div>
@@ -492,7 +492,7 @@ export default function CompetitionLobby() {
             <button
               onClick={handleJoinRoom}
               disabled={joinCode.length !== 6 || isLoading}
-              className="w-full p-5 rounded-2xl bg-gradient-to-r from-accent to-pink-600 text-white font-bold text-xl shadow-[0_6px_0_#be185d] hover:shadow-[0_3px_0_#be185d] hover:translate-y-[3px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full p-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-md shadow-indigo-200 hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : '⚔️ Entrar al Duelo'}
             </button>
@@ -508,3 +508,4 @@ export default function CompetitionLobby() {
     </motion.div>
   );
 }
+

@@ -21,7 +21,7 @@ export default function GameLayout({
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-panel w-full max-w-4xl mx-auto rounded-3xl p-6 md:p-10 shadow-2xl flex flex-col min-h-[600px] relative overflow-hidden"
+      className="glass-panel w-full max-w-4xl mx-auto rounded-3xl p-6 md:p-10 shadow-xl border border-slate-200 bg-white flex flex-col min-h-[600px] relative overflow-hidden text-slate-800"
     >
       <div className="flex items-center justify-between mb-8">
         <h2 className={`text-2xl md:text-3xl font-display font-bold ${colorClass}`}>
@@ -29,12 +29,12 @@ export default function GameLayout({
         </h2>
         
         <div className="flex items-center gap-4">
-          <div className="bg-white/50 dark:bg-black/20 px-4 py-2 rounded-full font-bold text-lg">
+          <div className="bg-indigo-50 border border-indigo-200 text-indigo-900 px-4 py-2 rounded-full font-bold text-lg">
             {current} / {total}
           </div>
           <button 
             onClick={() => setStep('GAMES')}
-            className="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors border-2 border-white"
+            className="w-10 h-10 bg-rose-500 hover:bg-rose-600 text-white rounded-full flex items-center justify-center shadow transition-colors border-2 border-white"
           >
             <X className="w-6 h-6" />
           </button>
@@ -45,9 +45,9 @@ export default function GameLayout({
         {children}
       </div>
       
-      <div className="w-full bg-gray-200 dark:bg-gray-700 h-3 mt-8 rounded-full overflow-hidden">
+      <div className="w-full bg-slate-200 h-3 mt-8 rounded-full overflow-hidden">
         <motion.div 
-          className="h-full bg-gradient-to-r from-success to-primary"
+          className="h-full bg-gradient-to-r from-emerald-500 to-indigo-600"
           initial={{ width: 0 }}
           animate={{ width: `${(current / total) * 100}%` }}
           transition={{ duration: 0.3 }}
@@ -56,3 +56,4 @@ export default function GameLayout({
     </motion.div>
   );
 }
+

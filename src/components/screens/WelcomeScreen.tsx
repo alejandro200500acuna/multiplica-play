@@ -170,36 +170,29 @@ export default function WelcomeScreen() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-panel p-8 md:p-12 rounded-3xl text-center shadow-xl max-w-lg mx-auto w-full border-t-4 border-t-primary relative z-10"
+        className="glass-panel p-8 md:p-12 rounded-3xl text-center shadow-xl max-w-lg mx-auto w-full border border-slate-200 bg-white relative z-10 text-slate-800"
       >
         <div className="mb-4"><span className="text-5xl">✖️➗</span></div>
         <h1
-          className="text-4xl md:text-5xl font-display font-bold mb-2 title-shadow"
-          style={{ 
-            WebkitTextStroke: '1.5px white', 
-            WebkitTextFillColor: 'transparent',
-            backgroundImage: 'linear-gradient(to right, var(--color-primary), var(--color-accent))',
-            WebkitBackgroundClip: 'text', 
-            backgroundClip: 'text' 
-          }}
+          className="text-4xl md:text-5xl font-display font-bold mb-2 text-indigo-600 tracking-tight"
         >
           Multiplica Play
         </h1>
-        <p className="text-lg text-foreground/80 font-medium mb-6">
+        <p className="text-base text-slate-600 font-medium mb-6">
           ¡Aprende y practica las tablas de multiplicar jugando!
         </p>
 
         {/* Tab switcher */}
-        <div className="flex bg-black/20 p-1 rounded-2xl mb-8">
+        <div className="flex bg-slate-100 p-1.5 rounded-2xl mb-8 border border-slate-200">
           <button
             onClick={() => switchMode('login')}
-            className={`flex-1 py-2.5 rounded-xl font-bold transition-all text-sm ${mode === 'login' ? 'bg-indigo-500/20 text-indigo-300 shadow-sm' : 'opacity-60 hover:opacity-100'}`}
+            className={`flex-1 py-2.5 rounded-xl font-bold transition-all text-sm ${mode === 'login' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
           >
             Iniciar Sesión
           </button>
           <button
             onClick={() => switchMode('register')}
-            className={`flex-1 py-2.5 rounded-xl font-bold transition-all text-sm ${mode === 'register' ? 'bg-pink-500/20 text-pink-300 shadow-sm' : 'opacity-60 hover:opacity-100'}`}
+            className={`flex-1 py-2.5 rounded-xl font-bold transition-all text-sm ${mode === 'register' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
           >
             Registrarse
           </button>
@@ -212,7 +205,7 @@ export default function WelcomeScreen() {
                 <AnimatePresence>
                   {username.trim() && (
                     <motion.div initial={{ opacity: 0, y: -10, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.9 }} transition={{ duration: 0.2 }}>
-                      <span className="inline-block px-5 py-2 bg-primary/20 text-indigo-100 border border-primary/20 rounded-full text-xl font-display font-bold shadow-sm">
+                      <span className="inline-block px-5 py-2 bg-indigo-50 text-indigo-900 border border-indigo-200 rounded-full text-lg font-display font-bold shadow-sm">
                         ¡Hola, {username.trim()}! 👋
                       </span>
                     </motion.div>
@@ -222,16 +215,16 @@ export default function WelcomeScreen() {
 
               <form onSubmit={handleStart} className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2 text-left">
-                  <label htmlFor="username" className="font-bold text-foreground/90 ml-2 text-sm uppercase tracking-wider">Usuario</label>
+                  <label htmlFor="username" className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Usuario</label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary/60 group-focus-within:text-primary transition-colors"><User className="w-6 h-6" /></div>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><User className="w-5 h-5" /></div>
                     <input
                       id="username" 
                       type="text" 
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Ej. juanito123"
-                      className="w-full pl-12 pr-6 py-4 rounded-2xl border-4 border-primary/10 focus:border-primary/40 focus:outline-none bg-black/40 text-xl font-bold transition-all shadow-inner placeholder:text-foreground/20"
+                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-lg font-bold text-slate-900 transition-all placeholder:text-slate-400"
                       required 
                       disabled={isLoading}
                     />
@@ -239,16 +232,16 @@ export default function WelcomeScreen() {
                 </div>
 
                 <div className="flex flex-col gap-2 text-left mb-2">
-                  <label htmlFor="password" className="font-bold text-foreground/90 ml-2 text-sm uppercase tracking-wider">Contraseña</label>
+                  <label htmlFor="password" className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Contraseña</label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary/60 group-focus-within:text-primary transition-colors"><Lock className="w-6 h-6" /></div>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><Lock className="w-5 h-5" /></div>
                     <input
                       id="password" 
                       type="password" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-12 pr-6 py-4 rounded-2xl border-4 border-primary/10 focus:border-primary/40 focus:outline-none bg-black/40 text-xl font-bold transition-all shadow-inner placeholder:text-foreground/20"
+                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-lg font-bold text-slate-900 transition-all placeholder:text-slate-400"
                       required 
                       disabled={isLoading}
                     />
@@ -257,8 +250,8 @@ export default function WelcomeScreen() {
 
                 <AnimatePresence>
                   {errorMsg && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-2 text-red-200 bg-red-500/20 p-4 rounded-2xl border border-red-500/20">
-                      <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-400" />
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-2 text-rose-700 bg-rose-50 p-4 rounded-2xl border border-rose-200">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-600" />
                       <span className="font-medium text-sm">{errorMsg}</span>
                     </motion.div>
                   )}
@@ -267,7 +260,7 @@ export default function WelcomeScreen() {
                 <button
                   type="submit"
                   disabled={!username.trim() || !password.trim() || isLoading}
-                  className="group relative flex items-center justify-center gap-3 w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white font-display font-bold text-2xl py-4.5 px-8 rounded-2xl shadow-[0_8px_0_var(--color-primary-dark)] hover:shadow-[0_4px_0_var(--color-primary-dark)] hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                  className="group relative flex items-center justify-center gap-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold text-xl py-4 px-8 rounded-2xl shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                   {isLoading ? <span className="animate-pulse">Iniciando...</span> : (<>Entrar <LogIn className="w-6 h-6 flex-shrink-0 group-hover:translate-x-1 transition-transform" /></>)}
                 </button>
@@ -275,13 +268,13 @@ export default function WelcomeScreen() {
             </motion.div>
           ) : (
             <motion.div key="register" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
-              <p className="text-foreground/60 text-sm mb-6 font-medium">Crea tu cuenta gratis en segundos.<br />¡Accede de inmediato!</p>
+              <p className="text-slate-600 text-sm mb-6 font-medium">Crea tu cuenta gratis en segundos.<br />¡Accede de inmediato!</p>
 
               <form onSubmit={handleRegister} className="flex flex-col gap-5" autoComplete="off">
                 <div className="flex flex-col gap-2 text-left">
-                  <label htmlFor="reg-fullname" className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Nombre Completo</label>
+                  <label htmlFor="reg-fullname" className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Nombre Completo</label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><User className="w-5 h-5" /></div>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><User className="w-5 h-5" /></div>
                     <input
                       id="reg-fullname" 
                       type="text" 
@@ -289,7 +282,7 @@ export default function WelcomeScreen() {
                       onChange={(e) => setRegFullname(e.target.value)}
                       placeholder="Ej. Juan Pérez García"
                       autoComplete="off"
-                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner placeholder:text-foreground/10"
+                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-lg font-bold text-slate-900 transition-all placeholder:text-slate-400"
                       required 
                       disabled={isRegistering}
                     />
@@ -297,9 +290,9 @@ export default function WelcomeScreen() {
                 </div>
 
                 <div className="flex flex-col gap-2 text-left">
-                  <label htmlFor="reg-username" className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Usuario</label>
+                  <label htmlFor="reg-username" className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Usuario</label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><User className="w-5 h-5" /></div>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><User className="w-5 h-5" /></div>
                     <input
                       id="reg-username" 
                       type="text" 
@@ -308,7 +301,7 @@ export default function WelcomeScreen() {
                       placeholder={regFullname.trim() ? regFullname.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'.') : 'Ej. juan.perez'}
                       autoComplete="off"
                       name="reg-username-field"
-                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner placeholder:text-foreground/10"
+                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-lg font-bold text-slate-900 transition-all placeholder:text-slate-400"
                       required 
                       disabled={isRegistering}
                     />
@@ -317,16 +310,16 @@ export default function WelcomeScreen() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2 text-left">
-                    <label htmlFor="reg-password" className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Contraséña</label>
+                    <label htmlFor="reg-password" className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Contraseña</label>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><Lock className="w-5 h-5" /></div>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><Lock className="w-5 h-5" /></div>
                       <input
                         id="reg-password" 
                         type="password" 
                         value={regPassword}
                         onChange={(e) => setRegPassword(e.target.value)}
                         placeholder="••••"
-                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner placeholder:text-foreground/10"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-lg font-bold text-slate-900 transition-all placeholder:text-slate-400"
                         required 
                         disabled={isRegistering}
                       />
@@ -334,16 +327,16 @@ export default function WelcomeScreen() {
                   </div>
 
                   <div className="flex flex-col gap-2 text-left">
-                    <label htmlFor="reg-password-confirm" className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Repetir</label>
+                    <label htmlFor="reg-password-confirm" className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Repetir</label>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><Lock className="w-5 h-5" /></div>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><Lock className="w-5 h-5" /></div>
                       <input
                         id="reg-password-confirm" 
                         type="password" 
                         value={regPasswordConfirm}
                         onChange={(e) => setRegPasswordConfirm(e.target.value)}
                         placeholder="••••"
-                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner placeholder:text-foreground/10"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-lg font-bold text-slate-900 transition-all placeholder:text-slate-400"
                         required 
                         disabled={isRegistering}
                       />
@@ -353,18 +346,18 @@ export default function WelcomeScreen() {
 
                 {/* School Selection */}
                 <div className="flex flex-col gap-2 text-left">
-                  <label className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Escuela</label>
+                  <label className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Escuela</label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><School className="w-5 h-5" /></div>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><School className="w-5 h-5" /></div>
                     <select
                       value={regSchoolId}
                       onChange={(e) => { setRegSchoolId(e.target.value); setRegGrade(''); setRegRoomId(''); }}
-                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner appearance-none"
+                      className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-base font-bold text-slate-900 transition-all appearance-none"
                       required
                       disabled={isRegistering}
                     >
                       <option value="">-- Elige tu Escuela --</option>
-                      {schools.map(s => <option key={s.id} value={s.id} className="bg-gray-800">{s.name}</option>)}
+                      {schools.map(s => <option key={s.id} value={s.id} className="bg-white text-slate-900">{s.name}</option>)}
                     </select>
                   </div>
                 </div>
@@ -372,36 +365,36 @@ export default function WelcomeScreen() {
                 {/* Grade and Room Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2 text-left">
-                    <label className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Grado</label>
+                    <label className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Grado</label>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><GraduationCap className="w-5 h-5" /></div>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><GraduationCap className="w-5 h-5" /></div>
                       <select
                         value={regGrade}
                         onChange={(e) => { setRegGrade(e.target.value); setRegRoomId(''); }}
-                        className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner appearance-none disabled:opacity-40"
+                        className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-base font-bold text-slate-900 transition-all appearance-none disabled:opacity-40"
                         required
                         disabled={isRegistering || !regSchoolId}
                       >
                         <option value="">-- Grado --</option>
-                        {['1', '2', '3', '4', '5', '6'].map(g => <option key={g} value={g} className="bg-gray-800">{g}° Grado</option>)}
+                        {['1', '2', '3', '4', '5', '6'].map(g => <option key={g} value={g} className="bg-white text-slate-900">{g}° Grado</option>)}
                       </select>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-2 text-left">
-                    <label className="font-bold text-foreground/90 ml-2 text-xs uppercase tracking-wider">Aula</label>
+                    <label className="font-bold text-slate-700 ml-2 text-xs uppercase tracking-wider">Aula</label>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent/60 group-focus-within:text-accent transition-colors"><DoorOpen className="w-5 h-5" /></div>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 transition-colors"><DoorOpen className="w-5 h-5" /></div>
                       <select
                         value={regRoomId}
                         onChange={(e) => setRegRoomId(e.target.value)}
-                        className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-4 border-accent/10 focus:border-accent/40 focus:outline-none bg-black/40 text-lg font-bold transition-all shadow-inner appearance-none disabled:opacity-40"
+                        className="w-full pl-12 pr-6 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-600 focus:bg-white focus:outline-none bg-slate-50 text-base font-bold text-slate-900 transition-all appearance-none disabled:opacity-40"
                         required
                         disabled={isRegistering || !regGrade || availableClassrooms.length === 0}
                       >
                         <option value="">-- Aula --</option>
                         {availableClassrooms.map(r => (
-                          <option key={r.id} value={r.id} className="bg-gray-800">Aula {r.room_number}</option>
+                          <option key={r.id} value={r.id} className="bg-white text-slate-900">Aula {r.room_number}</option>
                         ))}
                       </select>
                     </div>
@@ -409,13 +402,13 @@ export default function WelcomeScreen() {
                 </div>
 
                 {availableClassrooms.length === 0 && regGrade && regSchoolId && (
-                  <p className="text-xs text-amber-400 font-bold ml-2 italic">Aún no hay aulas creadas para este grado.</p>
+                  <p className="text-xs text-amber-700 font-bold ml-2 italic">Aún no hay aulas creadas para este grado.</p>
                 )}
 
                 <AnimatePresence>
                   {regError && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-2 text-red-200 bg-red-500/20 p-4 rounded-xl border border-red-500/20">
-                      <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-400" />
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-2 text-rose-700 bg-rose-50 p-4 rounded-xl border border-rose-200">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-600" />
                       <span className="font-medium text-sm">{regError}</span>
                     </motion.div>
                   )}
@@ -424,7 +417,7 @@ export default function WelcomeScreen() {
                 <button
                   type="submit"
                   disabled={!regFullname.trim() || !regUsername.trim() || !regPassword.trim() || !regPasswordConfirm.trim() || isRegistering}
-                  className="group relative flex items-center justify-center gap-3 w-full bg-gradient-to-r from-accent to-pink-600 hover:from-pink-600 hover:to-accent text-white font-display font-bold text-2xl py-4 px-8 rounded-2xl shadow-[0_8px_0_#be185d] hover:shadow-[0_4px_0_#be185d] hover:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group relative flex items-center justify-center gap-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold text-xl py-4 px-8 rounded-2xl shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isRegistering ? <span className="animate-pulse">Creando...</span> : <>¡Registrarme! 🎮</>}
                 </button>

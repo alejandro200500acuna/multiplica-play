@@ -28,14 +28,14 @@ export default function MathMemory() {
   useEffect(() => {
     const newCards: Card[] = [];
     
-    // Use a Set to ensure unique mathematical results so we don't have multiple identical results
     const usedResults = new Set<number>();
-    
+    const tablesToUse = selectedTables.length > 0 ? selectedTables : [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
     for (let i = 0; i < TOTAL_PAIRS; i++) {
       let num1, num2, result;
       // Loop until we find a unique result to prevent "multiple correct cards" ambiguity
       do {
-        num1 = selectedTables[Math.floor(Math.random() * selectedTables.length)];
+        num1 = tablesToUse[Math.floor(Math.random() * tablesToUse.length)];
         num2 = Math.floor(Math.random() * 10) + 1; // 1 to 10
         result = num1 * num2;
       } while (usedResults.has(result));
@@ -210,12 +210,12 @@ export default function MathMemory() {
               
               {/* Front of card (visible when flipped) */}
               <div 
-                className={`absolute inset-0 backface-hidden rounded-2xl flex items-center justify-center border-4 shadow-md bg-white text-3xl md:text-4xl font-display font-bold ${
+                className={`absolute inset-0 backface-hidden rounded-2xl flex items-center justify-center border-4 shadow-md bg-white text-2xl md:text-3xl font-display font-extrabold ${
                   card.isMatched 
-                    ? 'border-green-400 text-green-500 opacity-50 shadow-[0_6px_0_#4ade80]' 
+                    ? 'border-emerald-400 bg-emerald-50 text-emerald-600 opacity-70' 
                     : card.type === 'operation'
-                      ? 'border-primary text-primary-dark shadow-[0_6px_0_var(--color-primary)]'
-                      : 'border-secondary text-secondary-dark shadow-[0_6px_0_var(--color-secondary)]'
+                      ? 'border-indigo-500 text-indigo-900 shadow-sm'
+                      : 'border-amber-500 text-amber-900 shadow-sm'
                 }`}
                 style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
               >

@@ -490,42 +490,42 @@ export default function AdminDashboard() {
             >
               {/* Left Col: Create user */}
               <div className="lg:col-span-1">
-                <div className="glass-panel p-6 rounded-3xl border border-white/10">
+                <div className="glass-panel p-6 rounded-3xl border border-slate-200 bg-white text-slate-800">
                   <div className="flex items-center gap-3 mb-6">
-                    <UserPlus className="w-6 h-6 text-primary" />
-                    <h3 className="text-xl font-bold">Nuevo Estudiante</h3>
+                    <UserPlus className="w-6 h-6 text-indigo-600" />
+                    <h3 className="text-xl font-bold text-slate-900">Nuevo Estudiante</h3>
                   </div>
                   
                   <form onSubmit={handleCreateStudent} className="flex flex-col gap-4">
                     <div>
-                      <label className="text-sm font-bold opacity-80 mb-1 block">Nombre Completo</label>
+                      <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Nombre Completo</label>
                       <input
                         type="text"
                         value={newFullname}
                         onChange={(e) => setNewFullname(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-black/40 border-2 border-white/5 focus:border-primary/50 outline-none font-bold text-white transition-all shadow-inner"
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 focus:bg-white outline-none font-bold text-slate-900 transition-all placeholder:text-slate-400"
                         placeholder="Ej. Juan Pérez"
                         required
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-bold opacity-80 mb-1 block">Usuario</label>
+                      <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Usuario</label>
                       <input
                         type="text"
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-black/40 border-2 border-white/5 focus:border-primary/50 outline-none font-bold text-white transition-all shadow-inner"
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 focus:bg-white outline-none font-bold text-slate-900 transition-all placeholder:text-slate-400"
                         placeholder="Ej. juanito"
                         required
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-bold opacity-80 mb-1 block">Contraseña</label>
+                      <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Contraseña</label>
                       <input
                         type="text"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-black/40 border-2 border-white/5 focus:border-primary/50 outline-none font-bold text-white transition-all shadow-inner"
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 focus:bg-white outline-none font-bold text-slate-900 transition-all placeholder:text-slate-400"
                         placeholder="Ej. 1234"
                         required
                       />
@@ -533,11 +533,11 @@ export default function AdminDashboard() {
                     {role === 'admin' && (
                       <div className="flex flex-col gap-4">
                         <div>
-                          <label className="text-sm font-bold opacity-80 mb-1 block">Tipo de Usuario</label>
+                          <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Tipo de Usuario</label>
                           <select
                             value={newUserRole}
                             onChange={(e) => setNewUserRole(e.target.value)}
-                            className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none"
+                            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 font-bold text-slate-900 outline-none"
                           >
                             <option value="student">Estudiante</option>
                             <option value="profesor">Profesor</option>
@@ -548,11 +548,11 @@ export default function AdminDashboard() {
                         {newUserRole === 'student' && (
                           <>
                             <div>
-                              <label className="text-sm font-bold opacity-80 mb-1 block">Escuela</label>
+                              <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Escuela</label>
                               <select
                                 value={newSchoolId}
                                 onChange={(e) => { setNewSchoolId(e.target.value); setNewGradeForStudent(''); setNewRoomId(''); }}
-                                className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none"
+                                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 font-bold text-slate-900 outline-none"
                               >
                                 <option value="">-- Selecciona Escuela --</option>
                                 {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -561,11 +561,11 @@ export default function AdminDashboard() {
 
                             <div className="grid grid-cols-2 gap-2">
                               <div>
-                                <label className="text-sm font-bold opacity-80 mb-1 block">Grado</label>
+                                <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Grado</label>
                                 <select
                                   value={newGradeForStudent}
                                   onChange={(e) => { setNewGradeForStudent(e.target.value); setNewRoomId(''); }}
-                                  className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none disabled:opacity-50"
+                                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 font-bold text-slate-900 outline-none disabled:opacity-50"
                                   disabled={!newSchoolId}
                                 >
                                   <option value="">-- Grado --</option>
@@ -573,11 +573,11 @@ export default function AdminDashboard() {
                                 </select>
                               </div>
                               <div>
-                                <label className="text-sm font-bold opacity-80 mb-1 block">Aula</label>
+                                <label className="text-xs font-bold text-slate-700 mb-1 block uppercase tracking-wider">Aula</label>
                                 <select
                                   value={newRoomId}
                                   onChange={(e) => setNewRoomId(e.target.value)}
-                                  className="w-full px-4 py-2 rounded-xl bg-white dark:bg-black/50 focus:ring-2 focus:ring-primary outline-none disabled:opacity-50"
+                                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-600 font-bold text-slate-900 outline-none disabled:opacity-50"
                                   disabled={!newGradeForStudent || availableRoomsForNew.length === 0}
                                 >
                                   <option value="">-- Aula --</option>
@@ -592,12 +592,12 @@ export default function AdminDashboard() {
                     <button
                       type="submit"
                       disabled={isCreating}
-                      className="mt-4 bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark transition-colors shadow-lg flex items-center justify-center gap-2"
+                      className="mt-4 bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-md flex items-center justify-center gap-2"
                     >
                       {isCreating ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear Estudiante'}
                     </button>
                     {createMsg && (
-                      <p className={`text-center font-bold text-sm mt-2 ${createMsg.includes('✅') ? 'text-success' : 'text-error'}`}>
+                      <p className={`text-center font-bold text-sm mt-2 ${createMsg.includes('✅') ? 'text-emerald-600' : 'text-rose-600'}`}>
                         {createMsg}
                       </p>
                     )}
@@ -681,15 +681,15 @@ export default function AdminDashboard() {
                     <Loader2 className="w-10 h-10 animate-spin text-primary" />
                   </div>
                 ) : (
-                  <div className="bg-white/50 dark:bg-black/30 rounded-3xl shadow-inner border border-white/20 overflow-hidden relative">
+                  <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden relative text-slate-800">
                     {isLoading && (
-                      <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] flex items-center justify-center z-10 transition-all">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                      <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10 transition-all">
+                        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
                       </div>
                     )}
                     <div className="overflow-x-auto">
                       <table className="w-full">
-                        <thead className="bg-black/5 dark:bg-white/5">
+                        <thead className="bg-slate-100 border-b border-slate-200">
                           <tr>
                             <th className="px-3 py-4 text-center w-10">
                               <input
@@ -702,22 +702,22 @@ export default function AdminDashboard() {
                                     setSelectedIds([]);
                                   }
                                 }}
-                                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                               />
                             </th>
-                            <th className="px-2 py-4 text-left font-bold text-primary text-[10px]">Nombre</th>
-                            <th className="px-2 py-4 text-left font-bold text-primary text-[10px]">Escuela / Aula</th>
-                            <th className="px-2 py-4 text-left font-bold text-primary text-[10px]">Usuario</th>
-                            <th className="px-2 py-4 text-left font-bold text-primary text-[10px]">Contraseña</th>
-                            {role === 'admin' && <th className="px-2 py-4 text-left font-bold text-primary text-[10px]">Rol</th>}
-                            <th className="px-2 py-4 text-center font-bold text-primary text-[10px]">Sesiones</th>
-                            <th className="px-2 py-4 text-center font-bold text-primary text-[10px]">Estado</th>
-                            <th className="px-2 py-4 text-center font-bold text-primary text-[10px]">Acciones</th>
+                            <th className="px-2 py-4 text-left font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Nombre</th>
+                            <th className="px-2 py-4 text-left font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Escuela / Aula</th>
+                            <th className="px-2 py-4 text-left font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Usuario</th>
+                            <th className="px-2 py-4 text-left font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Contraseña</th>
+                            {role === 'admin' && <th className="px-2 py-4 text-left font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Rol</th>}
+                            <th className="px-2 py-4 text-center font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Sesiones</th>
+                            <th className="px-2 py-4 text-center font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Estado</th>
+                            <th className="px-2 py-4 text-center font-bold text-indigo-900 text-[11px] uppercase tracking-wider">Acciones</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-black/5 dark:divide-white/5">
+                        <tbody className="divide-y divide-slate-100">
                           {filteredStudents.map((st) => (
-                            <tr key={st.id} className={`hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${selectedIds.includes(st.id) ? 'bg-primary/5' : ''}`}>
+                            <tr key={st.id} className={`hover:bg-slate-50 transition-colors ${selectedIds.includes(st.id) ? 'bg-indigo-50/50' : ''}`}>
                               <td className="px-2 py-4 text-center">
                                 {st.role === 'student' && (
                                   <input
@@ -730,21 +730,21 @@ export default function AdminDashboard() {
                                         setSelectedIds(selectedIds.filter(id => id !== st.id));
                                       }
                                     }}
-                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                   />
                                 )}
                               </td>
-                              <td className="px-2 py-4 font-bold text-[11px] leading-tight max-w-[120px] break-words">{st.full_name}</td>
+                              <td className="px-2 py-4 font-bold text-slate-900 text-[11px] leading-tight max-w-[120px] break-words">{st.full_name}</td>
                               <td className="px-2 py-4">
                                 <div className="flex flex-col max-w-[150px]">
-                                  <span className="text-[10px] font-bold opacity-90 leading-tight">{(st.schools as any)?.name || 'N/A'}</span>
-                                  <span className="text-[9px] opacity-60 leading-tight">
+                                  <span className="text-[11px] font-bold text-slate-800 leading-tight">{(st.schools as any)?.name || 'N/A'}</span>
+                                  <span className="text-[10px] text-slate-500 font-medium leading-tight">
                                     {st.classrooms ? `${st.classrooms.grade}° Grado - Aula ${st.classrooms.room_number}` : 'Sin asignar'}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-2 py-4 opacity-80 text-[10px] truncate max-w-[80px]" title={st.username}>{st.username}</td>
-                              <td className="px-2 py-4 opacity-80 font-mono text-[10px]">{st.password}</td>
+                              <td className="px-2 py-4 font-medium text-slate-700 text-[11px] truncate max-w-[80px]" title={st.username}>{st.username}</td>
+                              <td className="px-2 py-4 font-mono font-semibold text-slate-700 text-[11px]">{st.password}</td>
                               {role === 'admin' && (
                                 <td className="px-2 py-4 capitalize font-bold text-[9px]">
                                   <span className={`px-2 py-0.5 rounded-full ${

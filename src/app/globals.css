@@ -15,15 +15,18 @@
 }
 
 :root {
-  --background: #0a0920; /* Darker, richer midnight blue/purple */
-  --foreground: #ffffff;
-  --primary: #8b5cf6; /* Vibrant Violet */
-  --primary-dark: #6d28d9;
-  --secondary: #fbbf24;
-  --secondary-dark: #f59e0b;
-  --accent: #f472b6; /* Soft Pink/Accent */
-  --success: #34d399;
-  --error: #fb7185;
+  --background: #3b59c8; /* Royal blue outer backdrop */
+  --dashboard-bg: #f4f6fb; /* Soft fresh light gray/blue surface */
+  --sidebar-bg: #425cc7; /* Slate indigo sidebar */
+  --sidebar-active: #ffffff;
+  --foreground: #1e293b; /* Deep slate dark text */
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --secondary: #f59e0b;
+  --secondary-dark: #d97706;
+  --accent: #6366f1;
+  --success: #10b981;
+  --error: #f43f5e;
 }
 
 /* Hide number input spinners */
@@ -37,32 +40,97 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* Light mode overrides - mostly ignored but kept for compatibility */
-.light-theme {
-  --background: #fdf8f5;
-  --foreground: #1e293b;
-}
-
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.15) 0px, transparent 50%);
-  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-.title-shadow {
-  text-shadow: 0 4px 10px rgba(139, 92, 246, 0.5);
+/* Custom Scrollbar for dashboard panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Active sidebar item curve effect */
+.sidebar-pill-active {
+  position: relative;
+  background-color: #f4f6fb;
+  color: #3b59c8;
+  font-weight: 700;
+  border-top-left-radius: 9999px;
+  border-bottom-left-radius: 9999px;
+}
+
+.sidebar-pill-active::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-bottom-right-radius: 20px;
+  box-shadow: 8px 8px 0 8px #f4f6fb;
+  pointer-events: none;
+}
+
+.sidebar-pill-active::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-top-right-radius: 20px;
+  box-shadow: 8px -8px 0 8px #f4f6fb;
+  pointer-events: none;
+}
+
+/* Clean Dashboard Card */
+.dash-card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  color: #1e293b;
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.07);
+  color: #1e293b;
 }
+
+.dash-card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.dash-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 35px -10px rgba(59, 89, 200, 0.12);
+}
+
+
 
 
 

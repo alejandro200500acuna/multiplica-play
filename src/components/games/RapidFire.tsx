@@ -64,9 +64,9 @@ export default function RapidFire() {
               animate={{ opacity: 1, scale: 1, rotateX: 0 }}
               exit={{ opacity: 0, scale: 1.5, filter: 'blur(10px)' }}
               transition={{ type: 'spring', damping: 15 }}
-              className="text-7xl md:text-9xl font-display font-bold text-foreground mb-16 title-shadow text-black dark:text-white"
+              className="text-6xl md:text-8xl font-display font-bold text-slate-900 mb-12"
             >
-              {currentQuestion.num1} <span className="text-primary">×</span> {currentQuestion.num2}
+              {currentQuestion.num1} <span className="text-indigo-600">×</span> {currentQuestion.num2}
             </motion.div>
           )}
         </AnimatePresence>
@@ -80,9 +80,9 @@ export default function RapidFire() {
                 exit={{ opacity: 0, scale: 0.5 }}
                 className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
               >
-                <div className={`rounded-3xl p-8 shadow-2xl flex flex-col items-center gap-4 ${feedback === 'correct' ? 'bg-green-100 dark:bg-green-900 border-4 border-success' : 'bg-red-100 dark:bg-red-900 border-4 border-error'}`}>
+                <div className={`rounded-3xl p-8 shadow-2xl flex flex-col items-center gap-4 border-4 bg-white ${feedback === 'correct' ? 'border-emerald-500 text-emerald-800' : 'border-rose-500 text-rose-800'}`}>
                   <span className="text-8xl drop-shadow-lg">{feedback === 'correct' ? '😃' : '😢'}</span>
-                  <span className={`text-3xl font-display font-bold ${feedback === 'correct' ? 'text-success' : 'text-error'}`}>
+                  <span className={`text-3xl font-display font-bold ${feedback === 'correct' ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {feedback === 'correct' ? '¡Correcto!' : '¡Incorrecto!'}
                   </span>
                 </div>
@@ -93,16 +93,16 @@ export default function RapidFire() {
           {currentQuestion.options?.map((opt, i) => (
              <motion.button
               key={`${currentQuestion.id}-${i}`}
-              whileHover={{ scale: feedback ? 1 : 1.05 }}
-              whileTap={{ scale: feedback ? 1 : 0.95 }}
+              whileHover={{ scale: feedback ? 1 : 1.04 }}
+              whileTap={{ scale: feedback ? 1 : 0.96 }}
               onClick={() => triggerFeedback(opt, opt === currentQuestion.correctAnswer)}
               disabled={feedback !== null}
-              className={`text-3xl font-bold py-6 rounded-3xl border-4 transition-all ${
+              className={`text-3xl font-bold py-6 rounded-3xl border-2 transition-all ${
                 feedback !== null 
                   ? opt === currentQuestion.correctAnswer 
-                    ? 'bg-success text-white border-success shadow-[0_8px_0_#059669]' 
-                    : 'bg-white/50 dark:bg-white/5 text-gray-400 border-gray-300 dark:border-gray-700 shadow-none'
-                  : 'bg-white dark:bg-white/10 hover:bg-primary hover:text-white dark:hover:bg-primary border-primary/20 hover:border-primary shadow-[0_8px_0_var(--color-primary-100)] dark:shadow-[0_8px_0_var(--color-primary-900)] hover:shadow-[0_4px_0_var(--color-primary-600)]'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' 
+                    : 'bg-slate-100 text-slate-400 border-slate-200'
+                  : 'bg-slate-50 border-indigo-200 text-indigo-950 hover:bg-indigo-600 hover:text-white shadow-sm'
               }`}
             >
               {opt}

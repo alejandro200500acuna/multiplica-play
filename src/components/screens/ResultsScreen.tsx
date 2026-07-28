@@ -42,9 +42,9 @@ export default function ResultsScreen() {
     <motion.div 
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="glass-panel p-8 md:p-12 rounded-3xl w-full max-w-2xl mx-auto shadow-2xl flex flex-col items-center text-center relative overflow-hidden"
+      className="glass-panel p-8 md:p-12 rounded-3xl w-full max-w-2xl mx-auto shadow-xl border border-slate-200 bg-white flex flex-col items-center text-center relative overflow-hidden text-slate-800"
     >
-      <div className={`absolute top-0 left-0 w-full h-4 ${passed ? 'bg-success' : 'bg-error'}`} />
+      <div className={`absolute top-0 left-0 w-full h-4 ${passed ? 'bg-emerald-500' : 'bg-rose-500'}`} />
 
       <motion.div
         initial={{ y: -50, opacity: 0 }}
@@ -54,22 +54,22 @@ export default function ResultsScreen() {
       >
         {passed ? (
           <div className="relative">
-            <div className="absolute inset-0 bg-yellow-400 blur-xl opacity-50 rounded-full scale-150 animate-pulse" />
-            <Trophy className="w-32 h-32 text-yellow-400 drop-shadow-2xl relative z-10" />
-            <Star className="w-10 h-10 text-yellow-500 absolute -top-4 -right-4 animate-spin-slow" />
-            <Star className="w-8 h-8 text-yellow-500 absolute top-10 -left-6 rotate-12" />
+            <div className="absolute inset-0 bg-amber-400 blur-xl opacity-50 rounded-full scale-150 animate-pulse" />
+            <Trophy className="w-28 h-28 text-amber-500 drop-shadow-lg relative z-10" />
+            <Star className="w-9 h-9 text-amber-400 absolute -top-4 -right-4 animate-spin-slow" />
+            <Star className="w-7 h-7 text-amber-400 absolute top-10 -left-6 rotate-12" />
           </div>
         ) : (
-          <Frown className="w-32 h-32 text-error drop-shadow-lg" />
+          <Frown className="w-28 h-28 text-rose-500 drop-shadow" />
         )}
       </motion.div>
 
-      <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 title-shadow text-white">
+      <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 text-slate-900">
         {passed ? '¡Felicidades!' : '¡Sigue practicando!'}
       </h2>
       
-      <p className="text-xl md:text-2xl font-bold bg-white/50 dark:bg-black/20 px-6 py-2 rounded-full mb-8 text-foreground">
-        {studentName}, has obtenido {scorePercentage}%
+      <p className="text-lg md:text-xl font-bold bg-indigo-50 border border-indigo-200 text-indigo-900 px-6 py-2 rounded-full mb-8 shadow-sm">
+        {studentName || 'Estudiante'}, has obtenido {scorePercentage}%
       </p>
 
       {isNewRecord && (

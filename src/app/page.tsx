@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardHomeView from '@/components/screens/DashboardHomeView';
 import WelcomeScreen from '@/components/screens/WelcomeScreen';
-import ModeSelectScreen from '@/components/screens/ModeSelectScreen';
 import TablesScreen from '@/components/screens/TablesScreen';
 import GamesScreen from '@/components/screens/GamesScreen';
 import PlayingScreen from '@/components/screens/PlayingScreen';
@@ -13,13 +14,14 @@ import CompetitionLobby from '@/components/screens/CompetitionLobby';
 import CompetitionGame from '@/components/screens/CompetitionGame';
 import CompetitionResult from '@/components/screens/CompetitionResult';
 import LearnTablesScreen from '@/components/screens/LearnTablesScreen';
+import SettingsScreen from '@/components/screens/SettingsScreen';
 import RobotMascot, { RobotMood } from '@/components/RobotMascot';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface RobotConfig { mood: RobotMood; message: string; }
 
 const ROBOT_BY_STEP: Record<string, RobotConfig> = {
-  WELCOME:           { mood: 'wave',    message: '¡Bienvenido a Multiplica Play! 👋' },
+  WELCOME:           { mood: 'wave',    message: '¡Bienvenido a Smart Play! 👋' },
   MODE_SELECT:       { mood: 'wave',    message: '¡Hola! ¿Qué jugamos hoy? 😊' },
   TABLES:            { mood: 'excited', message: '¡Perfecto, vamos a estudiar! 🎯' },
   GAMES:             { mood: 'happy',   message: '¡Elige tu juego y gana! 🎮' },
@@ -30,13 +32,14 @@ const ROBOT_BY_STEP: Record<string, RobotConfig> = {
   COMPETITION_GAME:  { mood: 'excited', message: '¡Dale, eres el mejor! 🔥' },
   COMPETITION_RESULT:{ mood: 'happy',   message: '¡Qué duelo más emocionante! 🎉' },
   ADMIN_DASHBOARD:   { mood: 'wave',    message: 'Panel de administración 🛠️' },
+  SETTINGS:          { mood: 'think',   message: 'Ajustes y configuración ⚙️' },
 };
 
-// Screens where the robot is hidden (too complex / full-width)
 const HIDDEN_ON = new Set(['PLAYING', 'COMPETITION_GAME', 'ADMIN_DASHBOARD']);
 
 export default function Home() {
   const currentStep = useStore((state) => state.currentStep);
+  const studentName = useStore((state) => state.studentName);
   const passed = useStore((state) => state.passed);
   const [mounted, setMounted] = useState(false);
 
@@ -44,7 +47,15 @@ export default function Home() {
 
   if (!mounted) return <main className="flex-1 min-h-screen" />;
 
-  // Override result mood based on pass/fail
+  // If user is not logged in or on WELCOME screen, render standalone login screen
+  if (!studentName || currentStep === 'WELCOME') {
+    return (
+      <main className="min-h-screen bg-transparent flex items-center justify-center p-4 font-sans relative z-10">
+        <WelcomeScreen />
+      </main>
+    );
+  }
+
   const robotConfig: RobotConfig =
     currentStep === 'RESULTS'
       ? passed
@@ -53,13 +64,14 @@ export default function Home() {
       : ROBOT_BY_STEP[currentStep] ?? { mood: 'idle', message: '¡Aquí estoy! 🤖' };
 
   const showRobot = !HIDDEN_ON.has(currentStep);
+  const showCalendarPanel = currentStep === 'MODE_SELECT' || currentStep === 'GAMES';
 
   return (
-    <main className="flex-1 flex flex-col min-h-screen p-4 md:p-8">
-      <div className="w-full mx-auto flex-1 flex flex-col justify-center relative items-center">
-        {currentStep === 'WELCOME' && <WelcomeScreen />}
-        {currentStep === 'MODE_SELECT' && <ModeSelectScreen />}
+    <DashboardLayout showCalendarRightPanel={showCalendarPanel}>
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        {currentStep === 'MODE_SELECT' && <DashboardHomeView />}
         {currentStep === 'ADMIN_DASHBOARD' && <div className="w-full"><AdminDashboard /></div>}
+        {currentStep === 'SETTINGS' && <div className="w-full"><SettingsScreen /></div>}
         {currentStep === 'TABLES' && <TablesScreen />}
         {currentStep === 'GAMES' && <div className="w-full max-w-6xl"><GamesScreen /></div>}
         {currentStep === 'PLAYING' && <PlayingScreen />}
@@ -70,7 +82,7 @@ export default function Home() {
         {currentStep === 'LEARN_TABLES' && <div className="w-full max-w-4xl"><LearnTablesScreen /></div>}
       </div>
 
-      {/* ── Floating Robot — fixed bottom-right ── */}
+      {/* ── Floating Mascot ── */}
       <AnimatePresence>
         {showRobot && (
           <motion.div
@@ -79,16 +91,18 @@ export default function Home() {
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={{ opacity: 0, x: 80 }}
             transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-            className="fixed bottom-6 right-6 z-50 pointer-events-none"
+            className="fixed bottom-8 right-8 z-50 pointer-events-none"
           >
             <RobotMascot
               mood={robotConfig.mood}
               message={robotConfig.message}
-              size={120}
+              size={110}
             />
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+    </DashboardLayout>
   );
 }
+
+
